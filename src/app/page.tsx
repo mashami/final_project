@@ -1,7 +1,18 @@
+"use client"
 import { Connect } from "@/components/Connect"
 import ContactUs from "@/components/ContactUs/ContactUs"
 import { Button, buttonVariants } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+import "@/styles/globals.scss"
+
 import Link from "next/link"
 
 export default function Home() {
@@ -45,24 +56,48 @@ export default function Home() {
             which going to be sell them on my platform.
           </p>
           <div className="pt-16 flex items-center justify-center gap-16 fill-red-500">
-            <Link
-              href={"/signup"}
-              className={cn(
-                buttonVariants({ variant: "default" }),
-                "px-4 rounded-lg"
-              )}
-            >
-              Sign in{" "}
-            </Link>
+            <Dialog>
+              <DialogTrigger>
+                <Button text="Create account" className="rounded-lg" />
+              </DialogTrigger>
 
+              <DialogContent className="Background">
+                <DialogHeader className="flex w-full items-center justify-center space-y-8">
+                  <DialogTitle className="text-black font-serif leading-4">
+                    DO YOU WANT TO JOIN AS{" "}
+                  </DialogTitle>
+                  <DialogDescription className="flex flex-col gap-16 ">
+                    <div className="space-y-4 text-gray-400">
+                      <p>
+                        Back-end Dev is like partner of our platform who will be
+                        able to post his/her idea implemented in APIs on our
+                        platform and he will be the one going to decide if
+                        his/her idea will be for sell.
+                      </p>
+                      <p>
+                        User Customer will be able to view all APIs from our
+                        partner backed developer and collection from different
+                        platforms and will be able to sign up as normal user to
+                        be able to buy APIs on our platforms and get
+                        notifications on her/his email.
+                      </p>
+                    </div>
+                    <div className="space-x-24 flex justify-center">
+                      <Button text="Customer" className="rounded-lg" />
+                      <Button text="Back-end Dev" className="rounded-lg" />
+                    </div>
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
             <Link
-              href={"/signup"}
+              href={"/signin"}
               className={cn(
                 buttonVariants({ variant: "default" }),
                 "px-4 rounded-lg"
               )}
             >
-              Create account{" "}
+              Sign in
             </Link>
           </div>
           <div>
