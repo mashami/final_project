@@ -1,5 +1,5 @@
 import "@/styles/globals.scss"
-import type { Metadata } from "next"
+import { Metadata } from "next"
 import { Inter } from "next/font/google"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="Background h-screen w-screen">
+    <html lang="en" className="Background min-h-full w-screen">
       <body className={inter.className}>{children}</body>
     </html>
   )

@@ -1,0 +1,9 @@
+.nav {
+  ul {
+    @apply lg:flex hidden text-[16px] gap-[3.75rem];
+
+    li {
+      @apply tracking-[0.01em];
+    }
+  }
+}

@@ -4,10 +4,10 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import style from "../auth.module.scss"
 
-const signIn = () => {
+const signupuser = () => {
   return (
-    <div className=" grid place-items-center  py-20 w-full">
-      <div className="border rounded-lg shadow-lg">
+    <div className=" grid place-items-center  py-20  w-full border">
+      <div className="border rounded-md">
         <div
           className={`${style.headerBackgroundColor}  flex  items-center justify-center border`}
         >
@@ -35,31 +35,31 @@ const signIn = () => {
             </svg>
           </div>
         </div>
-        <div className="border rounded-lg  shadow-lg">
-          <form className="pt-24 pb-12 bg-white grid place-content-center space-y-4 ">
-            <h1>Log in</h1>
 
-            <p>Enter your details to log in to your account</p>
-            <Input placeholder="Enter your Email" type="email" />
-            <Input placeholder="Enter your password" type="password" />
-            <Button
-              text="Continue"
-              className="w-full bg-blue-400 hover:bg-blue-300 hover:duration-700 ease-in-out transition"
-            />
+        <form className="pt-24 pb-12 bg-white grid place-content-center space-y-4 rounded-lg shadow-2xl">
+          <h1>Sign up</h1>
 
-            <div className="flex justify-between items-center">
-              <Link href={""} className="text-purple-400">
-                Forget password{" "}
-              </Link>
-              <Link href={"/"} className="text-purple-400">
-                Sign up
-              </Link>
-            </div>
-          </form>
-        </div>
+          <p className="text-gray-400 text-sm">
+            Enter your details to create account on this platform
+          </p>
+          <Input placeholder="Enter your Email" type="email" />
+          <Input placeholder="Enter your Phone number" type="text" />
+          <Input placeholder="Enter your password" type="password" />
+          <Input placeholder="Enter your Re-type password" type="password" />
+          <Button
+            text="Continue"
+            className="w-full bg-blue-400 hover:bg-blue-300 hover:duration-700 ease-in-out transition"
+          />
+          <div className="flex justify-end items-center gap-2">
+            <p>Already have account</p>
+            <Link href={"/signin"} className="text-purple-400">
+              Sign in
+            </Link>
+          </div>
+        </form>
       </div>
     </div>
   )
 }
 
-export default signIn
+export default signupuser

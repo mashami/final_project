@@ -73,6 +73,7 @@ export const shadcnPlugin = plugin(
           background: "hsl(var(--background))",
           foreground: "hsl(var(--foreground))",
           brand: "var(--brand-color)",
+
           primary: {
             DEFAULT: "hsl(var(--primary))",
             foreground: "hsl(var(--primary-foreground))"

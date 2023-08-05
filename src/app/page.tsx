@@ -12,17 +12,25 @@ import {
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import "@/styles/globals.scss"
-
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
+  const router = useRouter()
+  const customerHandlerOnclick = () => {
+    router.push("/signup-user")
+  }
+  const devHandlerOnclick = () => {
+    router.push("/signup-dev")
+  }
   return (
     <main className=" container h-full w-full relative">
       <div className=" absolute right-3 -top-3">
         <Button
-          text="Continue"
+          text="Get started"
           variant={"secondary"}
           className="rounded-full"
+          onClick={() => router.push("/Home")}
           icon={
             <svg
               width={25}
@@ -43,19 +51,21 @@ export default function Home() {
         <h1 className="text-purple-500">WELCOME TO iHUZO </h1>
       </div>
 
-      <div className="flex justify-between items-center pt-4 px-8  in gap-16">
-        <div className=" space-y-4">
+      <div className="flex justify-between items-center pt-4 px-8  in gap-12">
+        <div className=" space-y-6">
           <h1 className="text-6xl text-center ">
             Connecting Devs with Employers
           </h1>
-          <p className="text-gray-400 mx-28">
-            This website connecting Devs with Employers and also collect APIs
-            from back-ends platform. This website platform have APIs from
-            backend software developer and from different platforms but APIs
-            from our backend developers will be the implemented idea in APIs
-            which going to be sell them on my platform.
+          <p className="text-gray-400 mx-20">
+            This website serves as a bridge between developers and employers.
+            Its primary objective is to showcase the work of backend developers
+            and aggregate APIs from various backends and platforms. The platform
+            features APIs contributed by both backend software developers and
+            other platforms. However, the APIs created by our backend developers
+            form the core offerings that will be made available for sale on this
+            platform.
           </p>
-          <div className="pt-16 flex items-center justify-center gap-16 fill-red-500">
+          <div className="pt-5  flex items-center justify-center gap-16">
             <Dialog>
               <DialogTrigger>
                 <Button text="Create account" className="rounded-lg" />
@@ -83,8 +93,16 @@ export default function Home() {
                       </p>
                     </div>
                     <div className="space-x-24 flex justify-center">
-                      <Button text="Customer" className="rounded-lg" />
-                      <Button text="Back-end Dev" className="rounded-lg" />
+                      <Button
+                        text="Customer"
+                        className="rounded-lg"
+                        onClick={customerHandlerOnclick}
+                      />
+                      <Button
+                        text="Back-end Dev"
+                        className="rounded-lg"
+                        onClick={devHandlerOnclick}
+                      />
                     </div>
                   </DialogDescription>
                 </DialogHeader>
