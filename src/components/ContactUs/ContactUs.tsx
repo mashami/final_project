@@ -1,13 +1,17 @@
 "use client"
-import { Button } from "../ui/button"
+import { Button } from "@/components/ui/button"
 
 const ContactUs = () => {
   return (
     <div className="relative z-0 pt-16">
       <div className="mt-8 absolute -bottom-28 left-2 gap-3 space-y-2 flex items-center justify-center">
         <div className=" space-y-4 ">
-          <p className="text-[30px] text-gray-400">For Any question </p>
-          <p className="text-[20px] text-gray-400 text-center">Contact us</p>
+          <p className="text-[20px] text-gray-400">
+            If you have any questions{" "}
+          </p>
+          <p className="text-[15px] text-gray-400 text-center">
+            please feel free to get in touch with us.
+          </p>
         </div>
         <div className="bg-white rounded-full w-96 h-24 flex items-center justify-between px-4">
           <textarea
