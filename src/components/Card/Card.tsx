@@ -1,7 +1,6 @@
 "use client"
 import { cn } from "@/lib/utils"
 import "@/styles/globals.scss"
-import Link from "next/link"
 import React from "react"
 interface CardProps {
   svg: React.ReactNode
@@ -24,9 +23,7 @@ const Card = ({ svg, title, desc, backgroundColor, className }: CardProps) => {
         <div className={`pl-5 flex self-center pt-2`}>{svg}</div>
       </div>
       <div>
-        <Link href="">
-          <h2 className="mx-auto text-center font-bold px-14">{title}</h2>
-        </Link>
+        <h2 className="mx-auto text-center font-bold px-14">{title}</h2>
       </div>
       <div>
         <p className="text-center mx-7">{desc}</p>

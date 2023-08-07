@@ -1,6 +1,7 @@
 "use client"
 import { Connect } from "@/components/Connect"
 import ContactUs from "@/components/ContactUs/ContactUs"
+import { Logo } from "@/components/Logo"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Dialog,
@@ -25,7 +26,7 @@ export default function Home() {
   }
   return (
     <main className=" container h-full w-full relative">
-      <div className=" absolute right-3 -top-3">
+      <div className=" absolute right-24 top-8">
         <Button
           text="Get started"
           variant={"secondary"}
@@ -47,8 +48,11 @@ export default function Home() {
           }
         />
       </div>
-      <div className="flex justify-center mt-16">
-        <h1 className="text-purple-500">WELCOME TO iHUZO </h1>
+      <div className="flex justify-center items-center mt-8 ">
+        <span className="text-purple-500 space-y-4">
+          <Logo />
+          <h1>Welcome to iHUZO</h1>
+        </span>
       </div>
 
       <div className="flex justify-between items-center pt-4 px-8  in gap-12">

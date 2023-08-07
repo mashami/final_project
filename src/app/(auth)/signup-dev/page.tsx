@@ -50,6 +50,7 @@ const signupdev = () => {
             placeholder="Enter your  one project hosted link"
             type="text"
           />
+          <Input type="file" alt="Image" />
 
           <Input placeholder="Enter your password" type="password" />
           <Input placeholder="Enter your Re-type password" type="password" />

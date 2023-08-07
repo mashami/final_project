@@ -7,8 +7,10 @@ import Link from "next/link"
 const apis = () => {
   return (
     <div>
-      <NavBar />
-      <div className="w-full min-h-screen  grid place-content-center space-y-2  ">
+      <div className="fixed w-full top-0">
+        <NavBar />
+      </div>
+      <div className="w-full min-h-screen  grid place-content-center space-y-2 pt-28 ">
         <span className="text-center space-y-4 grid place-items-center">
           <h1>API Collection</h1>
           <span className="space-y-1">
