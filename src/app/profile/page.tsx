@@ -34,7 +34,6 @@ const Profile = async () => {
         <Link href={"/Home"} className="text-purple-500">
           Click here to containue
         </Link>
-        {/* <Button text="Go home" onClick={() => redirect("/Home")} /> */}
       </div>
     )
   } else return redirect("/Home")
