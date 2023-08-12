@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/toaster"
 import "@/styles/globals.scss"
 import { Metadata } from "next"
 import { Inter } from "next/font/google"
@@ -16,7 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="Background min-h-full w-screen">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {children}
+        <Toaster />
+      </body>
     </html>
   )
 }

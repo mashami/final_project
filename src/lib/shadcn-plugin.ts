@@ -59,7 +59,7 @@ export const shadcnPlugin = plugin(
     theme: {
       container: {
         center: true,
-        padding: "1rem",
+        padding: "0.5rem",
         screens: {
           "2xl": "1400px"
         }

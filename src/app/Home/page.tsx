@@ -70,7 +70,7 @@ const home = () => {
               </p>
             </span>
 
-            <Link href={""} className=" relative cursor-pointer ">
+            <Link href={"/dev-list"} className=" relative cursor-pointer ">
               <p className="text-purple-500 py-3 hover:text-purple-200 hover:duration-75 ease-in-out transition">
                 Click here to view them
               </p>

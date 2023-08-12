@@ -1,6 +1,7 @@
 "use client"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { Logo } from "../Logo"
 import MobileMenu from "../MobileMenu/MobileMenu"
 import { Button } from "../ui/button"
 import style from "./NavBar.module.scss"
@@ -159,39 +160,11 @@ const NavBar = () => {
       </svg>
 
       <div>
-        <h1 className="text-gray-500 font-light font-serif">iHUZO</h1>
+        <span className="text-gray-500 font-light font-serif">
+          <Logo />
+        </span>
       </div>
       <div>
-        {/* <button
-          onClick={menuClicked}
-          className={`${isMenuClicked ? "hidden" : ""}`}
-        >
-          <svg
-            className="lg:hidden block  "
-            width={30}
-            height={30}
-            fill="black"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <path d="M3 4H21V6H3V4ZM3 11H21V13H3V11ZM3 18H21V20H3V18Z"></path>
-          </svg>
-        </button>
-
-        <button
-          onClick={menuClicked}
-          className={`${!isMenuClicked ? "hidden" : ""}`}
-        >
-          <svg
-            fill="black"
-            width={30}
-            height={30}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <path d="M12.0007 10.5865L16.9504 5.63672L18.3646 7.05093L13.4149 12.0007L18.3646 16.9504L16.9504 18.3646L12.0007 13.4149L7.05093 18.3646L5.63672 16.9504L10.5865 12.0007L5.63672 7.05093L7.05093 5.63672L12.0007 10.5865Z"></path>
-          </svg>
-        </button> */}
         <ul>
           <li className="hover:text-purple-300 focus:text-purple-300">
             <a href="/Home">Home</a>
@@ -203,7 +176,7 @@ const NavBar = () => {
             <a href="/service">Service</a>
           </li>
           <li className="hover:text-purple-300">
-            <a href="">Developer</a>
+            <a href="/dev-list">Developer</a>
           </li>
           <li className="hover:text-purple-300">
             <a href="/apis">API</a>
