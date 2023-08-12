@@ -4,7 +4,7 @@ export const shadcnPlugin = plugin(
   ({ addBase }) => {
     addBase({
       ":root": {
-        "--background": "0 0% 94%",
+        "--background": "linear-gradient(180deg, #e6ddff 0%, #fff 53.71%)",
         "--foreground": "0 0% 23%",
 
         "--muted": "210 40% 96.1%",

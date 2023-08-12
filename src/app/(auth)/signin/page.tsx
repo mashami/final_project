@@ -1,12 +1,68 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client"
+import { Loader } from "@/components/Loader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/use-toast"
+import "@/styles/globals.scss"
+import { signIn } from "next-auth/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import style from "../auth.module.scss"
 
-const signIn = () => {
+const signInPage = () => {
+  const [email, setEmail] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const router = useRouter()
+
+  const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    if (!email || !password) {
+      toast({
+        variant: "destructive",
+        description: "All fields are required"
+      })
+
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false
+      })
+
+      if (result?.error) {
+        toast({
+          variant: "destructive",
+          description: result.error
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+
+      router.push("/profile")
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "An error occured. Please try again."
+      })
+
+      setIsLoading(false)
+    }
+  }
   return (
-    <div className=" grid place-items-center  py-20 w-full">
+    <div className=" h-screen background grid place-items-center  py-20 w-full">
       <div className="border rounded-lg shadow-lg">
         <div
           className={`${style.headerBackgroundColor}  flex  items-center justify-center border`}
@@ -36,16 +92,36 @@ const signIn = () => {
           </div>
         </div>
         <div className="border rounded-lg  shadow-lg">
-          <form className="pt-24 pb-12 bg-white grid place-content-center space-y-4 ">
+          <form
+            className="pt-24 pb-12 bg-white grid place-content-center space-y-4 "
+            onSubmit={onSubmitHandler}
+          >
             <h1>Log in</h1>
 
             <p>Enter your details to log in to your account</p>
-            <Input placeholder="Enter your Email" type="email" />
-            <Input placeholder="Enter your password" type="password" />
-            <Button
-              text="Continue"
-              className="w-full bg-blue-400 hover:bg-blue-300 hover:duration-700 ease-in-out transition"
+            <Input
+              value={email}
+              placeholder="Enter your Email"
+              type="email"
+              onChange={(e) => setEmail(e.target.value)}
             />
+            <Input
+              value={password}
+              placeholder="Enter your password"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {isLoading ? (
+              <div className="px-4 py-4 flex justify-center w-full bg-blue-400 ">
+                <Loader className="" />
+              </div>
+            ) : (
+              <Button
+                text="Log in"
+                className="w-full bg-blue-400 hover:bg-blue-300 hover:duration-700 ease-in-out transition"
+                loading={isLoading}
+              />
+            )}
 
             <div className="flex justify-between items-center">
               <Link href={""} className="text-purple-400">
@@ -62,4 +138,4 @@ const signIn = () => {
   )
 }
 
-export default signIn
+export default signInPage

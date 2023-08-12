@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster"
 import "@/styles/globals.scss"
 import { Metadata } from "next"
 import { Inter } from "next/font/google"
+import NextAuthSessionProvider from "./providers/NextAuthSessionProvider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,7 +19,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="Background min-h-full w-screen">
       <body className={inter.className}>
-        {children}
+        <main>
+          <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
+        </main>
+
         <Toaster />
       </body>
     </html>

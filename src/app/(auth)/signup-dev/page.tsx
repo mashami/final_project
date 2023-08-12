@@ -1,10 +1,107 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/use-toast"
+import { signUpDev } from "@/services/user"
+import { Loader } from "lucide-react"
+import { signIn } from "next-auth/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import style from "../auth.module.scss"
 
 const signupdev = () => {
+  const [email, setEmail] = useState<string>("")
+  const [phoneNumber, setPhoneNumber] = useState<string>("")
+  const [linkedIn, setLinkedIn] = useState<string>("")
+  const [gitHub, setGitHub] = useState<string>("")
+  const [hostedLink, setHostedLink] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
+  const [retypePassword, setRetypePassword] = useState<string>("")
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const router = useRouter()
+
+  const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (
+      !email ||
+      !password ||
+      !retypePassword ||
+      !linkedIn ||
+      !gitHub ||
+      !hostedLink
+    ) {
+      toast({
+        variant: "destructive",
+        description: "All fields are required"
+      })
+
+      return
+    }
+
+    if (password !== retypePassword) {
+      toast({
+        variant: "destructive",
+        description: "Passwords do not match"
+      })
+
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const data = await signUpDev({
+        email,
+        password,
+        retypedPassword: retypePassword,
+        github: gitHub,
+        hostedlink: hostedLink,
+        linkedin: linkedIn,
+        phoneNumber
+      })
+
+      if (data.error) {
+        toast({
+          variant: "destructive",
+          description: data.message
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false
+      })
+
+      if (result?.error) {
+        toast({
+          variant: "destructive",
+          description: result.error
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+
+      router.push("/Home")
+      setIsLoading(false)
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "An error occured. Please try again."
+      })
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className=" grid place-items-center  py-8  w-full ">
       <div className="border rounded-md">
@@ -36,28 +133,68 @@ const signupdev = () => {
           </div>
         </div>
 
-        <form className="pt-12 pb-4 bg-white grid place-content-center space-y-4 rounded-lg shadow-2xl">
+        <form
+          onSubmit={onSubmitHandler}
+          className="pt-12 pb-4 bg-white grid place-content-center space-y-4 rounded-lg shadow-2xl"
+        >
           <h1>Sign up</h1>
 
           <p className="text-gray-400 text-sm">
             Enter your details to create account on this platform
           </p>
-          <Input placeholder="Enter your Email" type="email" />
-          <Input placeholder="Enter your Phone number" type="text" />
-          <Input placeholder="Enter your LinkedIn profile link" type="text" />
-          <Input placeholder="Enter your gitHub profile link" type="text" />
           <Input
+            value={email}
+            placeholder="Enter your Email"
+            type="email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            value={phoneNumber}
+            placeholder="Enter your Phone number"
+            type="text"
+            onChange={(e) => setPhoneNumber(e.target.value)}
+          />
+          <Input
+            value={linkedIn}
+            placeholder="Enter your LinkedIn profile link"
+            type="text"
+            onChange={(e) => setLinkedIn(e.target.value)}
+          />
+          <Input
+            value={gitHub}
+            placeholder="Enter your gitHub profile link"
+            type="text"
+            onChange={(e) => setGitHub(e.target.value)}
+          />
+          <Input
+            value={hostedLink}
             placeholder="Enter your  one project hosted link"
             type="text"
+            onChange={(e) => setHostedLink(e.target.value)}
           />
-          <Input type="file" alt="Image" />
-
-          <Input placeholder="Enter your password" type="password" />
-          <Input placeholder="Enter your Re-type password" type="password" />
-          <Button
-            text="Continue"
-            className="w-full bg-blue-400 hover:bg-blue-300 hover:duration-700 ease-in-out transition"
+          <Input
+            value={password}
+            placeholder="Enter your password"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
           />
+          <Input
+            value={retypePassword}
+            placeholder="Enter your Re-type password"
+            type="password"
+            onChange={(e) => setRetypePassword(e.target.value)}
+          />
+          {isLoading ? (
+            <div className="px-4 py-4 flex justify-center w-full bg-blue-400 ">
+              <Loader className="" />
+            </div>
+          ) : (
+            <Button
+              text="Sign up"
+              className="w-full bg-blue-400 hover:bg-blue-300 hover:duration-700 ease-in-out transition"
+              loading={isLoading}
+            />
+          )}
           <div className="flex justify-end items-center gap-2">
             <p>Already have account</p>
             <Link href={"/signin"} className="text-purple-400">
