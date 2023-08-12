@@ -4,14 +4,11 @@ import Card from "../Card/Card"
 
 const CardList = () => {
   return (
-    <div className="lg:container grid lg:grid-cols-2 grid-rows-1 justify-center items-center lg:space-y-0 relative  ">
+    <div className="lg:container grid lg:grid-cols-2 justify-center items-center lg:space-y-0 relative  ">
       <Link href={""} className="relative -bottom-[4.125rem] space-y-2  ">
         <Card
           svg={
             <svg
-              className=""
-              width={74}
-              height={74}
               viewBox="0 0 74 74"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -38,15 +35,14 @@ const CardList = () => {
               />
             </svg>
           }
-          title="Business Idea Planning"
+          className="h-20"
+          title="Simple descriptions of API"
           desc="We present you a proposal and discuss niffty-gritty like"
           backgroundColor="bg-fourthColor"
         />
         <Card
           svg={
             <svg
-              width={74}
-              height={74}
               viewBox="0 0 74 74"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -76,7 +72,7 @@ const CardList = () => {
       </Link>
       <Link href={""} className=" relative  space-y-2  ">
         <svg
-          className="absolute lg:block hidden -bottom-12 right-0 -z-30"
+          className="absolute lg:block hidden -bottom-12 right-0 -z-10"
           width={120}
           height={120}
           viewBox="0 0 120 120"
@@ -88,8 +84,6 @@ const CardList = () => {
         <Card
           svg={
             <svg
-              width={74}
-              height={74}
               viewBox="0 0 74 74"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -149,7 +143,7 @@ const CardList = () => {
         />
       </Link>
       <svg
-        className="absolute lg:block hidden -z-10 -bottom-48 right-2 "
+        className="absolute lg:block hidden -z-20 -bottom-56 right-0 "
         width={960}
         height={960}
         viewBox="0 0 1047 619"

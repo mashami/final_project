@@ -1,10 +1,91 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client"
+
+import { Loader } from "@/components/Loader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/use-toast"
+import { signUp } from "@/services/user"
+import { signIn } from "next-auth/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import style from "../auth.module.scss"
 
 const signupuser = () => {
+  const [email, setEmail] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
+  const [phoneNumber, setPhoneNumber] = useState<string>("")
+  const [retypedPassword, setRetypedPassword] = useState<string>("")
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const router = useRouter()
+
+  const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    if (!email || !password || !retypedPassword) {
+      toast({
+        variant: "destructive",
+        description: "All fields are required"
+      })
+
+      return
+    }
+
+    if (password !== retypedPassword) {
+      toast({
+        variant: "destructive",
+        description: "Passwords do not match"
+      })
+
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const data = await signUp({ email, password, retypedPassword })
+
+      if (data.error) {
+        toast({
+          variant: "destructive",
+          description: data.message
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false
+      })
+
+      if (result?.error) {
+        toast({
+          variant: "destructive",
+          description: result.error
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+
+      router.push("/Home")
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "An error occured. Please try again."
+      })
+
+      setIsLoading(false)
+    }
+  }
   return (
     <div className=" grid place-items-center  py-20  w-full border">
       <div className="border rounded-md">
@@ -36,20 +117,53 @@ const signupuser = () => {
           </div>
         </div>
 
-        <form className="pt-24 pb-12 bg-white grid place-content-center space-y-4 rounded-lg shadow-2xl">
+        <form
+          className="pt-24 pb-12 bg-white grid place-content-center space-y-4 rounded-lg shadow-2xl"
+          onSubmit={onSubmitHandler}
+        >
           <h1>Sign up</h1>
 
           <p className="text-gray-400 text-sm">
             Enter your details to create account on this platform
           </p>
-          <Input placeholder="Enter your Email" type="email" />
-          <Input placeholder="Enter your Phone number" type="text" />
-          <Input placeholder="Enter your password" type="password" />
-          <Input placeholder="Enter your Re-type password" type="password" />
-          <Button
-            text="Continue"
-            className="w-full bg-blue-400 hover:bg-blue-300 hover:duration-700 ease-in-out transition"
-          />
+          <div className="space-y-4">
+            <Input
+              value={email}
+              placeholder="Enter your Email"
+              type="email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              value={phoneNumber}
+              placeholder="Enter your Phone number"
+              type="text"
+              onChange={(e) => setPhoneNumber(e.target.value)}
+            />
+            <Input
+              value={password}
+              placeholder="Enter your password"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Input
+              value={retypedPassword}
+              placeholder="Enter your Re-type password"
+              type="password"
+              onChange={(e) => setRetypedPassword(e.target.value)}
+            />
+            {isLoading ? (
+              <div className="px-4 py-4 flex justify-center w-full bg-blue-400 ">
+                <Loader className="" />
+              </div>
+            ) : (
+              <Button
+                text="Continue"
+                className="w-full bg-blue-400 hover:bg-blue-300 hover:duration-700 ease-in-out transition"
+                loading={isLoading}
+              />
+            )}
+          </div>
+
           <div className="flex justify-end items-center gap-2">
             <p>Already have account</p>
             <Link href={"/signin"} className="text-purple-400">

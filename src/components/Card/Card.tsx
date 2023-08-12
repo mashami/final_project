@@ -12,15 +12,19 @@ interface CardProps {
 
 const Card = ({ svg, title, desc, backgroundColor, className }: CardProps) => {
   return (
-    <div className="flex flex-col justify-between space-y-2 pb-14  w-[308px]  border rounded-3xl shadow-sm bg-white">
+    <div className="flex flex-col justify-between space-y-2 pb-12   w-[308px]  border rounded-3xl shadow-sm bg-white">
       <div
         className={cn(
-          `mt-[39px] mx-[94px] rounded-3xl pb-5 bg-[#FFF7E3]`,
+          `mt-[39px] mx-[94px] rounded-3xl pb-5 bg-purple-100/50 flex items-center justify-center`,
           backgroundColor,
           className
         )}
       >
-        <div className={`pl-5 flex self-center pt-2`}>{svg}</div>
+        <div
+          className={` flex self-center pt-2 [&>svg]:w-[54px] [&>svg]:h-[54px]`}
+        >
+          {svg}
+        </div>
       </div>
       <div>
         <h2 className="mx-auto text-center font-bold px-14">{title}</h2>

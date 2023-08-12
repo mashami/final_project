@@ -1,6 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 interface DevCardProps {
   image?: React.ReactNode
@@ -49,16 +50,19 @@ const DevCard = ({
 }: DevCardProps) => {
   return (
     <div className="flex flex-col items-center justify-center w-[197px]  space-y-6">
-      <div className={cn(`h-48 w-48 rounded-full  bg-transparent border`)}>
-        <span className="h-full  w-full [&>svg]:w-full [&>svg]:h-full [&>svg]:rounded-full flex justify-center items-center">
+      <div className={cn(`h-36 w-36 rounded-full  bg-transparent border`)}>
+        <Link
+          href={""}
+          className="h-full  w-full [&>svg]:w-full [&>svg]:h-full [&>svg]:rounded-full flex justify-center items-center"
+        >
           {image}
-        </span>
+        </Link>
       </div>
-      <div className=" flex flex-col space-y-4  text-center">
+      <div className=" flex flex-col space-y-2  text-center">
         <h1 className="text-[23px]">{name}</h1>
-        <span className="space-y-1 text-center text-gray-400">
+        <span className="space-y-1 text-center ">
           <p>{discription}</p>
-          <p>{languages}</p>
+          <p className="text-gray-400">{languages}</p>
         </span>
       </div>
     </div>

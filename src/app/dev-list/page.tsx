@@ -6,10 +6,10 @@ import NavBar from "@/components/NavBar/NavBar"
 const devs_list = () => {
   return (
     <div>
-      <div className="fixed w-full top-0">
+      <div>
         <NavBar />
       </div>
-      <div className="mt-32 ">
+      <div className=" pt-2">
         <DevsList />
       </div>
     </div>

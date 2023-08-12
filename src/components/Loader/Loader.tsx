@@ -15,7 +15,7 @@ const Loader = ({ width = 20, height = 20, className }: LoaderProps) => {
         width={width}
         height={height}
         className={cn(
-          "text-white animate-spin dark:text-gray-600 fill-primary",
+          "text-white animate-spin dark:text-white fill-blue-600",
           className
         )}
         viewBox="0 0 100 101"

@@ -27,11 +27,10 @@ const home = () => {
             <Button
               text="Search"
               variant={"default"}
-              className="rounded-full"
+              className="flex rounded-full"
               icon={
                 <svg
-                  width={18}
-                  height={18}
+                  className="w-[18px] h-[18px]"
                   viewBox="0 0 18 18"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"

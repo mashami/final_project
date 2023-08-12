@@ -19,17 +19,17 @@ import { Button } from "../ui/button"
 
 interface ProfileImageUploadProps {
   className?: string
-  userId?: string
-  brand_logo?: string
+  userId: string
+  profileImage?: string
 }
 
 const ProfileImageUpload = ({
   userId,
-  brand_logo,
+  profileImage,
   className
 }: ProfileImageUploadProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
-  const [updatedLogo, setUpdatedLogo] = useState<string>(brand_logo ?? "")
+  const [updatedLogo, setUpdatedLogo] = useState<string>(profileImage ?? "")
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const [isPending, startTransition] = useTransition()
@@ -57,7 +57,7 @@ const ProfileImageUpload = ({
 
   const handleDialogOpen = (open: boolean) => {
     if (!open) {
-      setUpdatedLogo(brand_logo ?? "")
+      setUpdatedLogo(profileImage ?? "")
     }
 
     setIsDialogOpen(open)
