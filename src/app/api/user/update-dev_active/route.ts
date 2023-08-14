@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { HttpStatusCode } from "@/utils/enums"
+import { sendMail } from "@/utils/mailService"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
@@ -31,6 +32,11 @@ export async function POST(req: Request) {
         updatedAt: new Date()
       }
     })
+    await sendMail(
+      "Activeted",
+      user.email,
+      `You are now approved by iHUZO admin, Start to use iHUZO platform `
+    )
 
     return NextResponse.json(
       {

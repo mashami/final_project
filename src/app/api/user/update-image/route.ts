@@ -1,10 +1,10 @@
 import { prisma } from "@/lib/prisma"
+import cloudinary from "@/utils/cloudinary"
 import { HttpStatusCode } from "@/utils/enums"
-import { sendMail } from "@/utils/mailService"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
-  const { userId } = await req.json()
+  const { userId, profile_image } = await req.json()
 
   if (!userId) {
     return NextResponse.json(
@@ -13,41 +13,48 @@ export async function POST(req: Request) {
     )
   }
 
+  if (!profile_image) {
+    return NextResponse.json(
+      { error: true, message: "Profile image is required" },
+      { status: HttpStatusCode.BAD_REQUEST }
+    )
+  }
+
   try {
+    // get old image and delete it
     const user = await prisma.user.findFirst({
       where: { id: userId }
     })
 
-    if (!user) {
-      return NextResponse.json(
-        { error: true, message: "User doen't exit" },
-        { status: HttpStatusCode.BAD_REQUEST }
-      )
+    const oldprofileImageId = user?.profile_image
+
+    if (oldprofileImageId) {
+      await cloudinary.v2.uploader.destroy(oldprofileImageId)
     }
 
+    // save new image and upload
+    const uploadedImage = await cloudinary.v2.uploader.upload(profile_image, {
+      folder: "ihuzo"
+    })
+
+    // update user in DB
     await prisma.user.update({
       where: { id: userId },
       data: {
-        status: "User",
+        profile_image: uploadedImage.secure_url,
+        profile_image_id: uploadedImage.public_id,
         updatedAt: new Date()
       }
     })
-    await sendMail(
-      "Not classfied",
-      user.email,
-      `you are not classfied for being the one of iHUZO platform`
-    )
 
     return NextResponse.json(
       {
         success: true,
-        message: "Dev has been updated to unctive successfully."
+        message: "Profile image has been updated successfully."
       },
       { status: HttpStatusCode.OK }
     )
   } catch (error) {
-    console.log(error)
-
     return NextResponse.json(
       { error: true, message: "An error occured. Please try again." },
       { status: HttpStatusCode.INTERNAL_SERVER }

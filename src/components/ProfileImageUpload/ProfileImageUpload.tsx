@@ -10,12 +10,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog"
+import { updateProfileImage } from "@/services/user"
 import { fileToDataURI } from "@/utils/helpers"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { Logo } from "../Logo"
 import { Button } from "../ui/button"
+import { toast } from "../ui/use-toast"
 
 interface ProfileImageUploadProps {
   className?: string
@@ -29,7 +31,7 @@ const ProfileImageUpload = ({
   className
 }: ProfileImageUploadProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
-  const [updatedLogo, setUpdatedLogo] = useState<string>(profileImage ?? "")
+  const [updatedImage, setUpdatedImage] = useState<string>(profileImage ?? "")
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const [isPending, startTransition] = useTransition()
@@ -49,21 +51,58 @@ const ProfileImageUpload = ({
 
     const uri = (await fileToDataURI(file)) as any
 
-    if (uri?.error) return
+    if (uri?.error) return console.log(uri.error)
 
-    setUpdatedLogo(uri)
+    setUpdatedImage(uri)
     setIsDialogOpen(true)
   }
 
   const handleDialogOpen = (open: boolean) => {
     if (!open) {
-      setUpdatedLogo(profileImage ?? "")
+      setUpdatedImage(profileImage ?? "")
     }
 
     setIsDialogOpen(open)
   }
-  const uploadLogoHandler = () => {
-    return
+
+  const uploadImageHandler = async () => {
+    setIsLoading(true)
+
+    try {
+      const data = await updateProfileImage({
+        userId,
+        profile_image: updatedImage
+      })
+
+      if (data.error) {
+        toast({
+          variant: "destructive",
+          description: data.message
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+
+      startTransition(() => {
+        router.refresh()
+
+        toast({
+          description: data.message
+        })
+
+        setIsLoading(false)
+        setIsDialogOpen(false)
+      })
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "An error occured. Please try again."
+      })
+
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -74,13 +113,15 @@ const ProfileImageUpload = ({
           className
         )}
       >
-        <Image
-          src="/paccyImage.png"
-          fill
-          priority
-          style={{ objectFit: "cover" }}
-          alt="cover-image"
-        />
+        {updatedImage && (
+          <Image
+            src={updatedImage}
+            fill
+            priority
+            style={{ objectFit: "cover" }}
+            alt="cover-image"
+          />
+        )}
 
         <div className="h-[40%] bg-black/30 absolute bottom-0 w-full flex items-center justify-center translate-y-full group-hover:translate-y-0 transition-transform duration-200 ease-in-out">
           <svg
@@ -94,12 +135,12 @@ const ProfileImageUpload = ({
 
         <label
           className="absolute w-full h-full top-0 left-0 z-20 cursor-pointer"
-          htmlFor="upload-logo"
+          htmlFor="upload-image"
         >
           <input
             className="hidden"
             type="file"
-            id="upload-logo"
+            id="upload-image"
             onChange={handleFileChange}
             accept="image/*"
             max={1}
@@ -108,8 +149,8 @@ const ProfileImageUpload = ({
       </div>
 
       <AlertDialog
-
-      // onOpenChange={(open) => handleDialogOpen(open)}
+        open={isDialogOpen}
+        onOpenChange={(open) => handleDialogOpen(open)}
       >
         <AlertDialogContent className="max-w-[300px] p-6 bg-white">
           <AlertDialogHeader>
@@ -121,9 +162,9 @@ const ProfileImageUpload = ({
           <div className="my-8 h-px bg-[#F0F0F0] w-full"></div>
 
           <div className="w-[250px] h-[250px] rounded-full mx-auto mb-8 overflow-hidden relative border border-primary">
-            {updatedLogo && (
+            {updatedImage && (
               <Image
-                src="/paccyImage.png"
+                src={updatedImage}
                 fill
                 priority
                 style={{ objectFit: "contain" }}
@@ -140,7 +181,7 @@ const ProfileImageUpload = ({
               <Button
                 className="h-10"
                 loading={isMutating}
-                // onClick={uploadLogoHandler}
+                onClick={uploadImageHandler}
               >
                 Confirm
               </Button>

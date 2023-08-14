@@ -157,3 +157,21 @@ export const changeDevUnActive = async ({ userId }: { userId: string }) => {
 
   return result
 }
+
+export const updateProfileImage = async ({
+  userId,
+  profile_image
+}: {
+  userId: string
+  profile_image: string
+}) => {
+  const response = await fetch(`/api/user/update-image`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, profile_image })
+  })
+
+  const result = await response.json()
+
+  return result
+}

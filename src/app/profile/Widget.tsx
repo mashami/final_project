@@ -234,7 +234,7 @@ const DevProfileWidget = ({ user }: DevProfileWidgetProps) => {
       </div>
 
       <div className="py-8 px-4 flex justify-between  ">
-        <div className=" w-96 h-full grid place-items-center py-8 border-r-2 space-y-4">
+        <div className=" w-96 h-full grid place-items-center py-8 space-y-4">
           <div className="grid gap-2 place-items-center">
             <ProfileImageUpload
               profileImage={user.profile_image ?? ""}

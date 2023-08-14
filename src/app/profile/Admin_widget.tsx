@@ -142,7 +142,7 @@ export const AdminDashboard = ({ unctiveUser }: AdminDashboardProps) => {
           <h1 className="font-medium text-[20px] leading-6 ">
             Developers REQUEST
           </h1>
-          {unctiveUser ? (
+          {unctiveUser.length ? (
             <Table className=" rounded-md border">
               <TableBody>
                 <TableRow className="text-center text-base font-semibold">
@@ -170,7 +170,7 @@ export const AdminDashboard = ({ unctiveUser }: AdminDashboardProps) => {
                         {user.hostedlink ?? ""}
                       </Link>
                     </TableCell>
-                    <TableCell className="space-x-4">
+                    <TableCell className="flex items-center justify-center space-x-4">
                       {isLoading ? (
                         <Loader />
                       ) : (
@@ -180,16 +180,13 @@ export const AdminDashboard = ({ unctiveUser }: AdminDashboardProps) => {
                           onClick={() => ChangeDevActive(user.id)}
                         />
                       )}
-                      {isLoading ? (
-                        <Loader />
-                      ) : (
-                        <Button
-                          text="Denied"
-                          variant={"destructive"}
-                          className="bg-red-500 rounded-lg hover:bg-red-400"
-                          onClick={() => denyDev(user.id)}
-                        />
-                      )}
+
+                      <Button
+                        text="Denied"
+                        variant={"destructive"}
+                        className="bg-red-500 rounded-lg hover:bg-red-400"
+                        onClick={() => denyDev(user.id)}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
