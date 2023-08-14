@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       where: { id: userId }
     })
 
-    const oldprofileImageId = user?.profile_image
+    const oldprofileImageId = user?.profile_image_id
 
     if (oldprofileImageId) {
       await cloudinary.v2.uploader.destroy(oldprofileImageId)
