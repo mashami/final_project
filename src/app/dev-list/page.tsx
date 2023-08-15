@@ -1,17 +1,13 @@
-"use client"
+import { getActiveDev } from "@/services/user"
+import { User } from "@prisma/client"
+import Devs_listWidget from "./Widget"
 
-import DevsList from "@/components/DevsList/DevsList"
-import NavBar from "@/components/NavBar/NavBar"
-
-const devs_list = () => {
+const devs_list = async () => {
+  const ActiveUser = await getActiveDev()
+  const usersActiveted = ActiveUser.users as User[]
   return (
     <div>
-      <div>
-        <NavBar />
-      </div>
-      <div className=" pt-2">
-        <DevsList />
-      </div>
+      <Devs_listWidget usersActiveted={usersActiveted} />
     </div>
   )
 }

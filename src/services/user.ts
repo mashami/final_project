@@ -175,3 +175,14 @@ export const updateProfileImage = async ({
 
   return result
 }
+
+export const getActiveDev = async () => {
+  const response = await fetch(process.env.APP_URL + `/api/user/get_active`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  })
+
+  const result = await response.json()
+
+  return result
+}

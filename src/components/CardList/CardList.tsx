@@ -36,8 +36,8 @@ const CardList = () => {
             </svg>
           }
           className="h-20"
-          title="Simple descriptions of API"
-          desc="We present you a proposal and discuss niffty-gritty like"
+          title="API collection"
+          desc="We collect APIs from different sides either developers or platforms"
           backgroundColor="bg-fourthColor"
         />
         <Card
@@ -65,8 +65,8 @@ const CardList = () => {
               />
             </svg>
           }
-          title="Development Website and App"
-          desc="Communication protocols apart from engagement models"
+          title="Connection"
+          desc="we connet developers to employee through our platform"
           backgroundColor="bg-firthColor"
         />
       </Link>
@@ -106,8 +106,8 @@ const CardList = () => {
               />
             </svg>
           }
-          title="Financial Planning System"
-          desc="Protocols apart from a engage models, pricing billing"
+          title="Sell APIs"
+          desc="The private APIs the user they have to pay in order to get access token"
           backgroundColor="bg-sixthColor"
         />
         <Card
@@ -138,7 +138,7 @@ const CardList = () => {
             </svg>
           }
           title="Market Analysis Project"
-          desc="Protocols apart from aengage models, pricing billing"
+          desc="The full docummented project idea "
           backgroundColor="bg-seventhColor"
         />
       </Link>

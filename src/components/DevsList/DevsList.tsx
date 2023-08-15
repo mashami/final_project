@@ -1,10 +1,25 @@
+/* eslint-disable react/jsx-key */
 "use client"
 
 import Image from "next/image"
 
+import { User } from "@prisma/client"
 import { DevCard } from "../DevCard"
 
-const DevsList = () => {
+interface DevsListProps {
+  devs: User[]
+}
+
+const DevsList = ({ devs }: DevsListProps) => {
+  const truncateDescription = (description: string, maxLength: number) => {
+    maxLength = 50
+
+    if (description.length > maxLength) {
+      return description.slice(0, maxLength) + "..."
+    }
+    return description
+  }
+
   return (
     <div className="px-24 w-full h-full -z-10 space-y-16">
       <div className="grid place-items-center">
@@ -12,104 +27,27 @@ const DevsList = () => {
       </div>
       <div className=" grid grid-cols-4 gap-2 place-items-center">
         <div>
-          <DevCard
-            image={
-              <Image
-                src="/paccyImage.png"
-                alt="dev image"
-                width={500}
-                height={500}
-                className="w-full h-full rounded-full"
+          {devs.length ? (
+            devs.map((dev) => (
+              <DevCard
+                image={
+                  <Image
+                    src={`${dev.profile_image}`}
+                    alt="dev image"
+                    width={500}
+                    height={500}
+                    className="w-full h-full rounded-full"
+                  />
+                }
+                id={`${dev.id}`}
+                name={`${dev.name}`}
+                discription={truncateDescription(`${dev.discription}`, 100)}
+                languages={`${dev.languages}`}
               />
-            }
-            name="MASHAMI Paccy"
-            discription="simple discriptions"
-            languages="Django"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MURENZI"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
-        </div>
-        <div>
-          <DevCard
-            discription="I'm software ingeener in java"
-            name="MUGABO"
-            languages="Javascript"
-          />
+            ))
+          ) : (
+            <p>There is not yet Back-end software yet</p>
+          )}
         </div>
       </div>
     </div>

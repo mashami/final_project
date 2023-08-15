@@ -8,6 +8,7 @@ interface DevCardProps {
   name: string
   discription: string
   languages: string
+  id: string
 }
 const DevCard = ({
   image = (
@@ -46,13 +47,15 @@ const DevCard = ({
   ),
   name,
   discription,
-  languages
+  languages,
+  id
 }: DevCardProps) => {
   return (
     <div className="flex flex-col items-center justify-center w-[197px]  space-y-6">
       <div className={cn(`h-36 w-36 rounded-full  bg-transparent border`)}>
         <Link
-          href={""}
+          href={`/dev/[id]`}
+          as={`dev/${id}`}
           className="h-full  w-full [&>svg]:w-full [&>svg]:h-full [&>svg]:rounded-full flex justify-center items-center"
         >
           {image}
