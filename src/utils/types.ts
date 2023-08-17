@@ -30,3 +30,14 @@ export interface SocialsName {
     | "mail"
     | "edit"
 }
+
+export interface createApi {
+  ownerId: string
+  title: String
+  discription: String
+  languages: String
+  price?: Number
+  apiDocumentationLink: String
+  apiUrl: String
+  apiCategory: String
+}

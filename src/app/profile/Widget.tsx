@@ -27,7 +27,9 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
+import { create } from "@/services/api"
 import { updateDescription, updateLanguage, updateName } from "@/services/user"
+import { fileToDataURI2 } from "@/utils/helpers"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
@@ -44,7 +46,12 @@ const DevProfileWidget = ({ user }: DevProfileWidgetProps) => {
   const [languanges, setLanguanges] = useState<string>(user.languages ?? "")
   const [description, setDescription] = useState<string>(user.discription ?? "")
   const [isPending, startTransition] = useTransition()
-
+  const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const [title, setTitle] = useState<string>("")
+  const [discription, setDiscription] = useState<string>("")
+  const [language, setLanguange] = useState<string>("")
+  const [hostedLink, setHostedLink] = useState<string>("")
+  const [uploadedFile, setUploadedFile] = useState<string>("")
   const router = useRouter()
 
   const isMutating = isLoading || isPending
@@ -216,6 +223,79 @@ const DevProfileWidget = ({ user }: DevProfileWidgetProps) => {
 
         setIsLoading(false)
         setIsEditing(false)
+      })
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "An error occured. Please try again."
+      })
+
+      setIsLoading(false)
+    }
+  }
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0]
+
+    if (!file) {
+      return null
+    }
+
+    const uri = (await fileToDataURI2(file)) as any
+
+    if (uri?.error) return console.log(uri.error)
+
+    setUploadedFile(uri)
+  }
+
+  const addApiHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (
+      !title ||
+      !discription ||
+      !language ||
+      !hostedLink ||
+      !uploadedFile ||
+      !selectedCategory
+    ) {
+      return toast({
+        variant: "destructive",
+        description: "All field required"
+      })
+    }
+    setIsLoading(true)
+    try {
+      const data = await create({
+        ownerId: user.id,
+        apiCategory: selectedCategory,
+        apiDocumentationLink: hostedLink,
+        apiUrl: uploadedFile,
+        discription: discription,
+        title,
+        languages: language
+      })
+
+      if (data.error) {
+        toast({
+          variant: "destructive",
+          description: data.message
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+
+      startTransition(() => {
+        router.refresh()
+
+        toast({
+          description: data.message
+        })
+
+        setIsLoading(false)
       })
     } catch (error) {
       toast({
@@ -401,7 +481,7 @@ const DevProfileWidget = ({ user }: DevProfileWidgetProps) => {
                   </DialogTitle>
                   <DialogDescription>
                     <form
-                      onSubmit={() => ""}
+                      onSubmit={addApiHandler}
                       className="flex flex-col space-y-4 "
                     >
                       <span className="space-y-2">
@@ -409,6 +489,7 @@ const DevProfileWidget = ({ user }: DevProfileWidgetProps) => {
                         <Input
                           type="text"
                           id="title"
+                          onChange={(e) => setTitle(e.target.value)}
                           placeholder="Enter a title of your API"
                         />
                       </span>
@@ -416,6 +497,7 @@ const DevProfileWidget = ({ user }: DevProfileWidgetProps) => {
                         <Label>API discription</Label>
                         <Textarea
                           id="title"
+                          onChange={(e) => setDiscription(e.target.value)}
                           placeholder="Enter a simple description"
                         />
                       </span>
@@ -423,51 +505,89 @@ const DevProfileWidget = ({ user }: DevProfileWidgetProps) => {
                         <Label>API Language</Label>
                         <Input
                           type="text"
+                          onChange={(e) => setLanguange(e.target.value)}
                           id="language"
                           placeholder="Enter the language used for this API"
                         />
                       </span>
-                      <Select onValueChange={() => ""}>
+                      <Select
+                        onValueChange={(value) => setSelectedCategory(value)}
+                      >
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
                         <SelectContent className="bg-white  ">
                           <SelectGroup>
                             <SelectLabel>Category</SelectLabel>
-                            <SelectItem
-                              value="apple"
-                              className="focus:bg-purple-200/50"
-                            >
-                              Private
-                            </SelectItem>
-                            <SelectItem
-                              value="apple"
-                              className="focus:bg-purple-200/50"
-                            >
-                              Public
-                            </SelectItem>
+                            {options.map((item) => (
+                              <SelectItem
+                                className="text-sm hover:bg-purple-50 "
+                                key={item.value}
+                                value={item.value}
+                              >
+                                {item.label}
+                              </SelectItem>
+                            ))}
                           </SelectGroup>
                         </SelectContent>
                       </Select>
+
+                      {selectedCategory === "private" && (
+                        <div className="space-y-2">
+                          <Label>Price</Label>
+                          <Input
+                            type="number"
+                            id="price"
+                            placeholder="Enter the price"
+                          />
+                        </div>
+                      )}
+
+                      {selectedCategory === "private" && (
+                        <div className="space-y-2">
+                          <Label>Access Token</Label>
+                          <Input
+                            type="text"
+                            id="accessToken"
+                            placeholder="Enter the access token"
+                          />
+                        </div>
+                      )}
+
                       <span className="space-y-2">
-                        <Label>Hosted Link </Label>
+                        <Label>Api Documentation Link </Label>
                         <Input
                           type="text"
+                          onChange={(e) => setHostedLink(e.target.value)}
                           id="link"
-                          placeholder="Enter a title of your API"
+                          placeholder="Enter hosted Link"
                         />
                       </span>
-                      <span className="space-y-2">
-                        <Label>Image API</Label>
-                        <Input id="picture" type="file" />
-                      </span>
+
                       <span className="space-y-2">
                         <Label>API description md file</Label>
-                        <Input id="description" type="file" />
+                        <Input
+                          id="description"
+                          type="file"
+                          // accept=".mdx"
+                          onChange={handleFileChange}
+                          max={1}
+                        />
                       </span>
 
                       <span className="flex-grow-0 self-end">
-                        <Button text="Add API" className="rounded-lg" />
+                        {isLoading ? (
+                          <div className="bg-purple-400 w-14 px-12 py-3 grid place-content-center rounded-lg">
+                            {" "}
+                            <Loader />
+                          </div>
+                        ) : (
+                          <Button
+                            text="Add API"
+                            loading={isLoading}
+                            className="rounded-lg"
+                          />
+                        )}
                       </span>
                     </form>
                   </DialogDescription>
@@ -599,29 +719,14 @@ const DevProfileWidget = ({ user }: DevProfileWidgetProps) => {
 }
 
 export default DevProfileWidget
-interface SaveButtonProps {
-  onClick: () => void
-}
-const SaveButton = ({ onClick }: SaveButtonProps) => {
-  return (
-    <span
-      className="cursor-pointer hover:opacity-75 transition"
-      onClick={onClick}
-    >
-      <svg
-        className="fill-green-500"
-        xmlns="http://www.w3.org/2000/svg"
-        width={22}
-        height={22}
-        viewBox="0 0 256 256"
-      >
-        <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z" />
-      </svg>
-    </span>
-  )
-}
 
-// <textarea
-//                   placeholder="Describe youself"
-//                   className="mx-4 py-12 w-full flex items-center justify-center flex-1 outline-none  bg-transparent"
-//                 />
+const options = [
+  {
+    label: "Private",
+    value: "Private"
+  },
+  {
+    label: "Public",
+    value: "Public"
+  }
+]

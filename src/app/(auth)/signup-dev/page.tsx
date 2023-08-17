@@ -186,7 +186,7 @@ const signupdev = () => {
           />
           {isLoading ? (
             <div className="px-4 py-4 flex justify-center w-full bg-blue-400 ">
-              <Loader className="" />
+              <Loader />
             </div>
           ) : (
             <Button

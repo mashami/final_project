@@ -146,11 +146,17 @@ export const changeDevActive = async ({ userId }: { userId: string }) => {
   return result
 }
 
-export const changeDevUnActive = async ({ userId }: { userId: string }) => {
+export const changeDevUnActive = async ({
+  userId,
+  message
+}: {
+  userId: string
+  message: string
+}) => {
   const response = await fetch(`/api/user/update-dev_unctive`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId })
+    body: JSON.stringify({ userId, message })
   })
 
   const result = await response.json()
