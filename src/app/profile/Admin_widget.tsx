@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { changeAPIActive } from "@/services/api"
+import { changeAPIActive, changeAPIUnActive } from "@/services/api"
 
 interface AdminDashboardProps {
   unctiveUser: UserWithRelations[]
@@ -122,7 +122,7 @@ export const AdminDashboard = ({
 
   const denyDev = async (userId: string) => {
     if (!userId) {
-      toast({
+      return toast({
         variant: "destructive",
         description: "Id must be provided"
       })
@@ -132,14 +132,11 @@ export const AdminDashboard = ({
       const data = await changeDevUnActive({ userId, message })
 
       if (data.error) {
-        toast({
+        setIsLoading(false)
+        return toast({
           variant: "destructive",
           description: data.message
         })
-
-        setIsLoading(false)
-
-        return
       }
       startTransition(() => {
         router.refresh()
@@ -151,25 +148,23 @@ export const AdminDashboard = ({
         setIsLoading(false)
       })
     } catch (error) {
-      toast({
+      return toast({
         variant: "destructive",
         description: "An error occured. Please try again."
       })
-
-      setIsLoading(false)
     }
   }
 
   const denyAPI = async (apiId: string) => {
     if (!apiId) {
-      toast({
+      return toast({
         variant: "destructive",
-        description: "Id must be provided"
+        description: "API id must be provided"
       })
     }
     setIsLoading(true)
     try {
-      const data = await changeDevUnActive({ apiId, message })
+      const data = await changeAPIUnActive({ apiId, message })
 
       if (data.error) {
         toast({
@@ -204,7 +199,7 @@ export const AdminDashboard = ({
       <NavBar />
       <div className=" min-w-screen px-4  space-y-12 ">
         <div className=" space-y-4  ">
-          <h1 className="font-medium text-[20px] leading-6 ">APIS REQUEST</h1>
+          <h1 className="font-medium text-[20px] leading-6">APIS REQUEST</h1>
           {apiUnctive.length ? (
             <Table className=" rounded-lg border">
               <TableBody>
@@ -269,7 +264,13 @@ export const AdminDashboard = ({
                                     placeholder="Enter message here"
                                   />
                                 </span>
-                                <Button text="Submit" variant={"default"} />
+                                {isLoading ? (
+                                  <div className="bg-purple-500 rounded-lg px-12 grid place-items-center py-4 w-full">
+                                    <Loader />
+                                  </div>
+                                ) : (
+                                  <Button text="Submit" variant={"default"} />
+                                )}
                               </form>
                             </DialogDescription>
                           </DialogHeader>
@@ -281,7 +282,7 @@ export const AdminDashboard = ({
               </TableBody>
             </Table>
           ) : (
-            <p></p>
+            <p>The is Api request yet</p>
           )}
         </div>
         <div className=" space-y-4 ">
@@ -344,7 +345,7 @@ export const AdminDashboard = ({
                             <DialogDescription>
                               <form
                                 onSubmit={() => denyDev(user.id)}
-                                className="flex flex-col space-y-4 "
+                                className="flex flex-col space-y-4 mt-12"
                               >
                                 <span className="space-y-2 flex-1">
                                   <Label>Message</Label>
@@ -355,7 +356,17 @@ export const AdminDashboard = ({
                                     placeholder="Enter message here"
                                   />
                                 </span>
-                                <Button text="Submit" variant={"default"} />
+                                {isLoading ? (
+                                  <div className="bg-purple-500 px-12 grid place-items-center py-4 w-full">
+                                    <Loader />
+                                  </div>
+                                ) : (
+                                  <Button
+                                    text="Submit"
+                                    variant={"default"}
+                                    loading
+                                  />
+                                )}
                               </form>
                             </DialogDescription>
                           </DialogHeader>

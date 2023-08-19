@@ -70,3 +70,54 @@ export const changeAPIActive = async ({ apiId }: { apiId: string }) => {
 
   return result
 }
+
+export const getPublicApis = async () => {
+  const response = await fetch(process.env.APP_URL + `/api/apise/get-public`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  })
+
+  const result = await response.json()
+
+  return result
+}
+
+export const getPrivateApis = async () => {
+  const response = await fetch(process.env.APP_URL + `/api/apise/get-private`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  })
+
+  const result = await response.json()
+
+  return result
+}
+
+export const getApisUser = async (userId: string) => {
+  const response = await fetch(
+    process.env.APP_URL + `/api/apise/get_apis_user`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId })
+    }
+  )
+
+  const result = await response.json()
+
+  return result
+}
+
+export const get_4_apis_active = async () => {
+  const response = await fetch(
+    process.env.APP_URL + `/api/apise/get_active_4`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    }
+  )
+
+  const result = await response.json()
+
+  return result
+}

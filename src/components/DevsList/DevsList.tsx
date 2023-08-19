@@ -3,6 +3,7 @@
 
 import Image from "next/image"
 
+import { truncateDescription } from "@/utils/helpers"
 import { User } from "@prisma/client"
 import { DevCard } from "../DevCard"
 
@@ -11,15 +12,6 @@ interface DevsListProps {
 }
 
 const DevsList = ({ devs }: DevsListProps) => {
-  const truncateDescription = (description: string, maxLength: number) => {
-    maxLength = 50
-
-    if (description.length > maxLength) {
-      return description.slice(0, maxLength) + "..."
-    }
-    return description
-  }
-
   return (
     <div className="px-24 w-full h-full -z-10 space-y-16">
       <div className="grid place-items-center">

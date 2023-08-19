@@ -1,5 +1,6 @@
+import { getApisUser } from "@/services/api"
 import { getUser } from "@/services/user"
-import { Prisma } from "@prisma/client"
+import { Api, Prisma } from "@prisma/client"
 import DevProfileWidget from "../Widget"
 
 interface PageProps {
@@ -11,15 +12,15 @@ export type UserWithRelations = Prisma.UserGetPayload<{
   include: { apis: true }
 }>
 const page = async ({ params: { id } }: PageProps) => {
-  console.log("my url id ==>", id)
-
   const data = await getUser(id)
   const user = data.user as UserWithRelations
-  console.log("my user", user)
+
+  const apisUser = await getApisUser(id)
+  const getApiUser = apisUser.apis as Api[]
 
   return (
     <div>
-      <DevProfileWidget user={user} />
+      <DevProfileWidget user={user} getApiUser={getApiUser} />
     </div>
   )
 }

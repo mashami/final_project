@@ -1,11 +1,10 @@
 "use client"
-import Link from "next/link"
-import Card from "../Card/Card"
+import Card from "@/components/Card/Card"
 
 const CardList = () => {
   return (
     <div className="lg:container grid lg:grid-cols-2 justify-center items-center lg:space-y-0 relative  ">
-      <Link href={""} className="relative -bottom-[4.125rem] space-y-2  ">
+      <div className="relative -bottom-[4.125rem] space-y-2  ">
         <Card
           svg={
             <svg
@@ -69,8 +68,8 @@ const CardList = () => {
           desc="we connet developers to employee through our platform"
           backgroundColor="bg-firthColor"
         />
-      </Link>
-      <Link href={""} className=" relative  space-y-2  ">
+      </div>
+      <div className=" relative  space-y-2  ">
         <svg
           className="absolute lg:block hidden -bottom-12 right-0 -z-10"
           width={120}
@@ -141,7 +140,7 @@ const CardList = () => {
           desc="The full docummented project idea "
           backgroundColor="bg-seventhColor"
         />
-      </Link>
+      </div>
       <svg
         className="absolute lg:block hidden -z-20 -bottom-56 right-0 "
         width={960}

@@ -1,4 +1,4 @@
-import { getUnActiveAPis } from "@/services/api"
+import { getApisUser, getUnActiveAPis } from "@/services/api"
 import { getUnctiveDev, getUser } from "@/services/user"
 import { Api, Prisma } from "@prisma/client"
 import { getServerSession } from "next-auth"
@@ -27,6 +27,9 @@ const Profile = async () => {
   const apiData = await getUnActiveAPis()
   const apiUnctive = apiData.apis as Api[]
 
+  const apisUser = await getApisUser(userId)
+  const getApiUser = apisUser.apis as Api[]
+
   // const u = await getUser(apiData.apis.ownerId)
   // console.log("uuuuuu====>", u)
 
@@ -34,7 +37,7 @@ const Profile = async () => {
   // console.log("The Name ===>", userWithApi)
 
   if (user.status === "Dev" && user.dev_status === "Active") {
-    return <DevProfileWidget user={user} />
+    return <DevProfileWidget user={user} getApiUser={getApiUser} />
   } else if (user.status === "Admin") {
     return <AdminDashboard unctiveUser={usersUctive} apiUnctive={apiUnctive} />
   } else if (user.status === "Dev" && user.dev_status === "Unctive") {

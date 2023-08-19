@@ -65,3 +65,10 @@ export function fileToDataURI2(file: File) {
     reader.readAsDataURL(file)
   })
 }
+
+export function truncateDescription(description: string, maxLength: number) {
+  if (description.length > maxLength) {
+    return description.slice(0, maxLength) + "..."
+  }
+  return description
+}

@@ -4,15 +4,22 @@ import { NextResponse } from "next/server"
 
 export async function POST() {
   try {
-    const users = await prisma.api.findMany({
-      where: { apiCategory: "Public", apiStatus: "Active" }
+    const apis = await prisma.api.findMany({
+      where: { apiCategory: "Private", apiStatus: "Active" }
     })
+
+    if (!apis) {
+      return NextResponse.json(
+        { error: true, message: "There is not yet APIs public" },
+        { status: HttpStatusCode.BAD_REQUEST }
+      )
+    }
 
     return NextResponse.json(
       {
         success: true,
         message: "Apis fetched successfully.",
-        users
+        apis
       },
       { status: HttpStatusCode.OK }
     )
