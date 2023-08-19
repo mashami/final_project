@@ -1,5 +1,6 @@
+import { getApisUser, getUnActiveAPis } from "@/services/api"
 import { getUnctiveDev, getUser } from "@/services/user"
-import { Prisma } from "@prisma/client"
+import { Api, Prisma } from "@prisma/client"
 import { getServerSession } from "next-auth"
 import Link from "next/link"
 import { redirect } from "next/navigation"
@@ -23,10 +24,22 @@ const Profile = async () => {
   const unctiveUser = await getUnctiveDev(userId)
   const usersUctive = unctiveUser.users as UserWithRelations[]
 
+  const apiData = await getUnActiveAPis()
+  const apiUnctive = apiData.apis as Api[]
+
+  const apisUser = await getApisUser(userId)
+  const getApiUser = apisUser.apis as Api[]
+
+  // const u = await getUser(apiData.apis.ownerId)
+  // console.log("uuuuuu====>", u)
+
+  // const userWithApi = u.user as UserWithRelations
+  // console.log("The Name ===>", userWithApi)
+
   if (user.status === "Dev" && user.dev_status === "Active") {
-    return <DevProfileWidget user={user} />
+    return <DevProfileWidget user={user} getApiUser={getApiUser} />
   } else if (user.status === "Admin") {
-    return <AdminDashboard unctiveUser={usersUctive} />
+    return <AdminDashboard unctiveUser={usersUctive} apiUnctive={apiUnctive} />
   } else if (user.status === "Dev" && user.dev_status === "Unctive") {
     return (
       <div className="w-screen h-screen grid place-content-center text-center space-y-4">

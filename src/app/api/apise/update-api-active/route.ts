@@ -4,46 +4,55 @@ import { sendMail } from "@/utils/mailService"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
-  const { userId, message } = await req.json()
+  const { apiId } = await req.json()
 
-  if (!userId) {
+  if (!apiId) {
     return NextResponse.json(
-      { error: true, message: "UserId is required" },
+      { error: true, message: "API Id is required" },
       { status: HttpStatusCode.BAD_REQUEST }
     )
   }
 
   try {
-    const user = await prisma.user.findFirst({
-      where: { id: userId }
+    const api = await prisma.api.findFirst({
+      where: { id: apiId }
     })
 
-    if (!user) {
+    if (!api) {
       return NextResponse.json(
-        { error: true, message: "User doen't exit" },
+        { error: true, message: "This API doen't exit" },
         { status: HttpStatusCode.BAD_REQUEST }
       )
     }
 
-    await prisma.user.update({
-      where: { id: userId },
+    const user = await prisma.user.findFirst({
+      where: { id: api.ownerId }
+    })
+    if (!user) {
+      return NextResponse.json(
+        { error: true, message: "user doen't exit" },
+        { status: HttpStatusCode.BAD_REQUEST }
+      )
+    }
+    // update user in DB
+    await prisma.api.update({
+      where: { id: apiId },
       data: {
-        status: "User",
+        apiStatus: "Active",
         updatedAt: new Date()
       }
     })
+
     await sendMail(
-      "Not classfied",
+      "Activeted",
       user.email,
-      `you are not classfied for being the one of iHUZO platform.
-      Here there is your message :
-      ${message}`
+      `Your API has been approved with iHUZO`
     )
 
     return NextResponse.json(
       {
         success: true,
-        message: "Dev has been updated to unctive successfully."
+        message: "API has been updated to active successfully."
       },
       { status: HttpStatusCode.OK }
     )

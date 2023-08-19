@@ -37,3 +37,38 @@ export function fileToDataURI(file: File) {
     reader.readAsDataURL(file)
   })
 }
+
+export function fileToDataURI2(file: File) {
+  const maxSizeInBytes = 5 * 1024 * 1024
+
+  if (file && file.size >= maxSizeInBytes) {
+    toast({
+      variant: "destructive",
+      description: "Selected file exceeds the maximum file size (5MB)"
+    })
+
+    return { error: true }
+  }
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+
+    reader.onload = () => {
+      const dataURI = reader.result
+      resolve(dataURI)
+    }
+
+    reader.onerror = (error) => {
+      reject(error)
+    }
+
+    reader.readAsDataURL(file)
+  })
+}
+
+export function truncateDescription(description: string, maxLength: number) {
+  if (description.length > maxLength) {
+    return description.slice(0, maxLength) + "..."
+  }
+  return description
+}

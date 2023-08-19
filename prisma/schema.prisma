@@ -31,17 +31,22 @@ model User {
 }
 
 model Api {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  price     String?
-  image     String?
-  imageId   String?
-  api       Json?
-  apiStatus    ApiStatus      @default(Public)
-  ownerId   String   @db.ObjectId
-  owner     User     @relation(fields: [ownerId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  discription String
+  languages    String
+  price       String?
+  apiDocumentationLink String?
+  image       String?
+  imageId     String?
+  apiUrl      String
+  apiId       String
+  apiCategory    ApiCategory      @default(Public)
+  apiStatus   ApiStatus  @default(Unctive)
+  ownerId     String   @db.ObjectId
+  owner       User     @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 }
 
 
@@ -53,12 +58,17 @@ enum Status {
   Dev
 }
 
-enum ApiStatus {
+enum ApiCategory {
   Private
   Public
 }
 
 enum DevStatus {
+  Active
+  Unctive
+
+}
+enum ApiStatus {
   Active
   Unctive
 
