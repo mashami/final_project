@@ -6,11 +6,19 @@ interface CardProps {
   svg: React.ReactNode
   title: string
   desc: string
+  price?: string
   backgroundColor?: string
   className?: string
 }
 
-const Card = ({ svg, title, desc, backgroundColor, className }: CardProps) => {
+const Card = ({
+  svg,
+  title,
+  desc,
+  price,
+  backgroundColor,
+  className
+}: CardProps) => {
   return (
     <div className="flex flex-col justify-between space-y-2 pb-12   w-[308px]  border rounded-3xl shadow-sm bg-white">
       <div
@@ -29,8 +37,11 @@ const Card = ({ svg, title, desc, backgroundColor, className }: CardProps) => {
       <div>
         <h2 className="mx-auto text-center font-bold px-14">{title}</h2>
       </div>
-      <div>
+      <div className="space-y-2">
         <p className="text-center mx-7">{desc}</p>
+        {price && (
+          <p className="text-center mx-7 flex self-start">{price} RWF</p>
+        )}
       </div>
     </div>
   )

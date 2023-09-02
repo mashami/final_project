@@ -131,7 +131,7 @@ export default function Home() {
               <DialogContent className="Background">
                 <DialogHeader className="flex w-full items-center justify-center space-y-8">
                   <DialogTitle className="text-black font-serif leading-4">
-                    DO YOU WANT TO JOIN AS{" "}
+                    DO YOU WANT TO JOIN US AS
                   </DialogTitle>
                   <DialogDescription className="flex flex-col gap-16 ">
                     <div className="space-y-4 text-gray-400">

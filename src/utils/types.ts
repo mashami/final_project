@@ -36,8 +36,9 @@ export interface createApi {
   title: String
   discription: String
   languages: String
-  price?: Number
+  price?: String
   apiDocumentationLink: String
   apiUrl: String
   apiCategory: String
+  accessToken: String
 }

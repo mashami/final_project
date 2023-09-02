@@ -3,7 +3,7 @@ import NavBar from "@/components/NavBar/NavBar"
 
 const SevicePage = () => {
   return (
-    <div className="max-h-screen relative">
+    <div className="min-h-screen relative">
       <svg
         className="absolute top-24 "
         width={150}
@@ -61,7 +61,7 @@ const SevicePage = () => {
       <div>
         <NavBar />
       </div>
-      <div className="flex justify-between px-4">
+      <div className="flex justify-between px-4 mt-10">
         <div className="w-1/2 px-20 text-center [&>p]:text-lg [&>h2]:text-lg [&>h2]:font-semibold grid place-content-center space-y-8 ">
           <h2>Who are we</h2>
           <p>

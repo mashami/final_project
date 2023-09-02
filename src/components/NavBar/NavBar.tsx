@@ -140,7 +140,7 @@ const NavBar = () => {
             <a href="/apis">API</a>
           </li>
           <li className="hover:text-purple-300">
-            <a href="">Contact</a>
+            <a href="">Requests</a>
           </li>
           <li className="hover:text-purple-300">
             <a href="/service">Service</a>

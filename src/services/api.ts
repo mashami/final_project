@@ -8,7 +8,8 @@ export const create = async ({
   discription,
   apiUrl,
   apiCategory,
-  apiDocumentationLink
+  apiDocumentationLink,
+  accessToken
 }: createApi) => {
   const response = await fetch(`/api/apise/create`, {
     method: "POST",
@@ -21,7 +22,8 @@ export const create = async ({
       apiCategory,
       languages,
       apiUrl,
-      price
+      price,
+      accessToken
     })
   })
 
@@ -33,7 +35,8 @@ export const create = async ({
 export const getUnActiveAPis = async () => {
   const response = await fetch(process.env.APP_URL + `/api/apise/get_unctive`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -51,7 +54,8 @@ export const changeAPIUnActive = async ({
   const response = await fetch(`/api/apise/update-api_unctive`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ apiId, message })
+    body: JSON.stringify({ apiId, message }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -63,7 +67,8 @@ export const changeAPIActive = async ({ apiId }: { apiId: string }) => {
   const response = await fetch(`/api/apise/update-api-active`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ apiId })
+    body: JSON.stringify({ apiId }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -73,8 +78,9 @@ export const changeAPIActive = async ({ apiId }: { apiId: string }) => {
 
 export const getPublicApis = async () => {
   const response = await fetch(process.env.APP_URL + `/api/apise/get-public`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" }
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -85,7 +91,8 @@ export const getPublicApis = async () => {
 export const getPrivateApis = async () => {
   const response = await fetch(process.env.APP_URL + `/api/apise/get-private`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -99,7 +106,8 @@ export const getApisUser = async (userId: string) => {
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId })
+      body: JSON.stringify({ userId }),
+      cache: "no-store"
     }
   )
 
@@ -113,10 +121,52 @@ export const get_4_apis_active = async () => {
     process.env.APP_URL + `/api/apise/get_active_4`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store"
     }
   )
 
+  const result = await response.json()
+
+  return result
+}
+
+export const getApi = async (apiId: string) => {
+  const response = await fetch(process.env.APP_URL + `/api/apise/getApi`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ apiId }),
+    cache: "no-store"
+  })
+  const result = await response.json()
+  return result
+}
+
+export const getDoc = async (url: string) => {
+  const response = await fetch(`${url}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store"
+  })
+
+  const result = await response.text()
+
+  return result
+}
+
+export const deleteApi = async ({
+  apiId,
+  userId
+}: {
+  apiId: string
+  userId: string
+}) => {
+  const response = await fetch(`/api/apise/delete_api`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ apiId, userId }),
+    cache: "no-store"
+  })
   const result = await response.json()
 
   return result

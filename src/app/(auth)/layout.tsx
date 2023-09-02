@@ -12,7 +12,6 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
   if (session) {
     redirect(`/profile`)
   }
-  console.log(session)
 
   return (
     <div className="">

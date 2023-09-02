@@ -13,7 +13,8 @@ export async function POST(req: Request) {
     title,
     price,
     apiUrl,
-    apiCategory
+    apiCategory,
+    accessToken
   } = await req.json()
 
   if (
@@ -71,6 +72,8 @@ export async function POST(req: Request) {
         title,
 
         price,
+
+        accessToken,
 
         apiCategory,
 

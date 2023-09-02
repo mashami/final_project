@@ -197,7 +197,10 @@ export const AdminDashboard = ({
   return (
     <div className="space-y-8">
       <NavBar />
-      <div className=" min-w-screen px-4  space-y-12 ">
+      <div>
+        <h1></h1>
+      </div>
+      <div className=" m-w-screen px-4  space-y-12 ">
         <div className=" space-y-4  ">
           <h1 className="font-medium text-[20px] leading-6">APIS REQUEST</h1>
           {apiUnctive.length ? (
@@ -220,7 +223,11 @@ export const AdminDashboard = ({
                     <TableCell key={api.id}>{api.apiCategory}</TableCell>
 
                     <TableCell key={api.id}>
-                      <Link href={`${api.apiUrl}`} className="text-purple-500">
+                      <Link
+                        href={`/getApi/[id]`}
+                        as={`getApi/${api.id}`}
+                        className="text-purple-500"
+                      >
                         Click here for Detail
                       </Link>
                     </TableCell>
@@ -264,7 +271,7 @@ export const AdminDashboard = ({
                                     placeholder="Enter message here"
                                   />
                                 </span>
-                                {isLoading ? (
+                                {isMutating ? (
                                   <div className="bg-purple-500 rounded-lg px-12 grid place-items-center py-4 w-full">
                                     <Loader />
                                   </div>

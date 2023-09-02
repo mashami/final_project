@@ -8,7 +8,8 @@ export const signUp = async ({
   const response = await fetch(`/api/user/create`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password, retypedPassword })
+    body: JSON.stringify({ email, password, retypedPassword }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -20,7 +21,8 @@ export const logIn = async ({ email, password }: SigninType) => {
   const response = await fetch(process.env.APP_URL + `/api/user/signin`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ email, password }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -48,7 +50,8 @@ export const signUpDev = async ({
       hostedlink,
       password,
       retypedPassword
-    })
+    }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -60,7 +63,8 @@ export const getUser = async (userId: string) => {
   const response = await fetch(process.env.APP_URL + `/api/user/get`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId })
+    body: JSON.stringify({ userId }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -78,7 +82,8 @@ export const updateName = async ({
   const response = await fetch(`/api/user/update-name`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, name })
+    body: JSON.stringify({ userId, name }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -96,7 +101,8 @@ export const updateLanguage = async ({
   const response = await fetch(`/api/user/update-language`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, language })
+    body: JSON.stringify({ userId, language }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -114,7 +120,8 @@ export const updateDescription = async ({
   const response = await fetch(`/api/user/update-description`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, description })
+    body: JSON.stringify({ userId, description }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -126,7 +133,8 @@ export const getUnctiveDev = async (userId: string) => {
   const response = await fetch(process.env.APP_URL + `/api/user/get_unctive`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId })
+    body: JSON.stringify({ userId }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -138,7 +146,8 @@ export const changeDevActive = async ({ userId }: { userId: string }) => {
   const response = await fetch(`/api/user/update-dev_active`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId })
+    body: JSON.stringify({ userId }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -156,7 +165,8 @@ export const changeDevUnActive = async ({
   const response = await fetch(`/api/user/update-dev_unctive`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, message })
+    body: JSON.stringify({ userId, message }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -174,7 +184,8 @@ export const updateProfileImage = async ({
   const response = await fetch(`/api/user/update-image`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, profile_image })
+    body: JSON.stringify({ userId, profile_image }),
+    cache: "no-store"
   })
 
   const result = await response.json()
@@ -185,7 +196,8 @@ export const updateProfileImage = async ({
 export const getActiveDev = async () => {
   const response = await fetch(process.env.APP_URL + `/api/user/get_active`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store"
   })
 
   const result = await response.json()

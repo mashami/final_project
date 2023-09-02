@@ -11,7 +11,7 @@ export async function middleware(req: NextRequest) {
   const path = url.pathname
   if (
     !session &&
-    (path.startsWith("/dev-profile") || path.startsWith("/account"))
+    (path.startsWith("/profile") || path.startsWith("/account"))
   ) {
     const url = req.nextUrl.clone()
     url.pathname = "/signin"

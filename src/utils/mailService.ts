@@ -10,7 +10,7 @@ export async function sendMail(subject: any, toEmail: any, otpText: any) {
   })
 
   var mailOptions = {
-    from: process.env.NODEMAILER_EMAIL,
+    from: `iHUZO Collection ${process.env.NODEMAILER_EMAIL}`,
     to: toEmail,
     subject: subject,
     text: otpText

@@ -72,3 +72,18 @@ export function truncateDescription(description: string, maxLength: number) {
   }
   return description
 }
+
+export const copyLinkHandler = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text)
+
+    toast({
+      description: "Link copied"
+    })
+  } catch (error) {
+    toast({
+      variant: "destructive",
+      description: "An error occured. Please try again"
+    })
+  }
+}

@@ -36,12 +36,15 @@ model Api {
   discription String
   languages    String
   price       String?
+  accessToken String?
   apiDocumentationLink String?
   image       String?
   imageId     String?
   apiUrl      String
   apiId       String
+  payment     Json? @default("[]")
   apiCategory    ApiCategory      @default(Public)
+  category     Category           @default(IoT)
   apiStatus   ApiStatus  @default(Unctive)
   ownerId     String   @db.ObjectId
   owner       User     @relation(fields: [ownerId], references: [id])
@@ -52,10 +55,33 @@ model Api {
 
 
 
+
 enum Status { 
   Admin
   User
   Dev
+}
+
+enum Category { 
+  Payment
+  Social_Media
+  Map_and_Location
+  Authentication
+  Authorization
+  File_Storage_and_Hosting
+  Messaging_and_Communication
+  SearchAnalytics_and_Monitoring
+  Video_Streaming_and_Hosting
+  Payment_Gateway
+  Cloud_Computing
+  Machine_Learning_and_AI
+  IoT
+  Calendar_and_Events
+  Translation_and_Language
+  E_commerce
+  Database
+  Authentication_and_Identity
+  Version_Control
 }
 
 enum ApiCategory {

@@ -14,6 +14,8 @@ interface ApisWidgetProps {
 }
 
 const ApisWidget = ({ apisPublic, apisPrivate }: ApisWidgetProps) => {
+  const priceFind = apisPrivate.filter((item) => item.price !== "")
+
   return (
     <div>
       <div className="">
@@ -66,7 +68,7 @@ const ApisWidget = ({ apisPublic, apisPrivate }: ApisWidgetProps) => {
               const randomIndex = Math.floor(Math.random() * svgs.length)
 
               return (
-                <Link href={""}>
+                <Link href={`/getApi/[id]`} as={`getApi/${api.id}`}>
                   <Card
                     title={api.title}
                     desc={truncateDescription(`${api.discription}`, 50)}
@@ -87,10 +89,11 @@ const ApisWidget = ({ apisPublic, apisPrivate }: ApisWidgetProps) => {
                 const randomIndex = Math.floor(Math.random() * svgs.length)
 
                 return (
-                  <Link href={""}>
+                  <Link href={`/getApi/[id]`} as={`getApi/${api.id}`}>
                     <Card
                       title={api.title}
                       desc={truncateDescription(`${api.discription}`, 50)}
+                      price={api.price ?? ""}
                       svg={svgs[randomIndex]}
                     />
                   </Link>
