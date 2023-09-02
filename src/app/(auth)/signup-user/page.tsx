@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client"
 
+import { FormField } from "@/components/FormField"
 import { Loader } from "@/components/Loader"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast"
 import { signUp } from "@/services/user"
 import { signIn } from "next-auth/react"
@@ -87,7 +87,7 @@ const signupuser = () => {
     }
   }
   return (
-    <div className=" grid place-items-center  py-20  w-full border">
+    <div className=" grid place-items-center py-8 fixed  w-full border">
       <div className="border rounded-md">
         <div
           className={`${style.headerBackgroundColor}  flex  items-center justify-center border`}
@@ -127,28 +127,32 @@ const signupuser = () => {
             Enter your details to create account on this platform
           </p>
           <div className="space-y-4">
-            <Input
+            <FormField
+              label="Email"
+              type="email"
               value={email}
               placeholder="Enter your Email"
-              type="email"
               onChange={(e) => setEmail(e.target.value)}
             />
-            <Input
-              value={phoneNumber}
-              placeholder="Enter your Phone number"
+            <FormField
+              label="Phone number"
               type="text"
+              value={phoneNumber}
+              placeholder="Enter your phone number"
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
-            <Input
+            <FormField
+              label="Password"
+              type="password"
               value={password}
               placeholder="Enter your password"
-              type="password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Input
-              value={retypedPassword}
-              placeholder="Enter your Re-type password"
+            <FormField
+              label="Re-type password"
               type="password"
+              value={retypedPassword}
+              placeholder="re-type password"
               onChange={(e) => setRetypedPassword(e.target.value)}
             />
             {isLoading ? (

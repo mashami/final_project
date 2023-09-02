@@ -15,6 +15,8 @@ interface DevProfileWidgetProps {
 }
 
 const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
+  console.log("user Image ==>", user.profile_image)
+
   return (
     <div>
       <div className="">

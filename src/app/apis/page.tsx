@@ -7,8 +7,6 @@ const page = async () => {
 
   const apisPublic = apiData.apis as Api[]
 
-  console.log("Public apis ==>", apisPublic.length)
-
   const apiDataPrivate = await getPrivateApis()
 
   const apisPrivate = apiDataPrivate.apis as Api[]

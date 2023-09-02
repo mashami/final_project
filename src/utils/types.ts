@@ -32,12 +32,13 @@ export interface SocialsName {
 }
 
 export interface createApi {
-  ownerId: string
+  ownerId: String
   title: String
   discription: String
   languages: String
-  price?: Number
+  price?: String
   apiDocumentationLink: String
   apiUrl: String
   apiCategory: String
+  accessToken: String
 }

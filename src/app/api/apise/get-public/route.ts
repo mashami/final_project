@@ -2,10 +2,13 @@ import { prisma } from "@/lib/prisma"
 import { HttpStatusCode } from "@/utils/enums"
 import { NextResponse } from "next/server"
 
-export async function POST() {
+export async function GET() {
   try {
     const apis = await prisma.api.findMany({
-      where: { apiCategory: "Public", apiStatus: "Active" }
+      where: { apiCategory: "Public", apiStatus: "Active" },
+      orderBy: {
+        createdAt: "desc"
+      }
     })
 
     if (!apis) {

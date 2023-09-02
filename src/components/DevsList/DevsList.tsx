@@ -17,30 +17,31 @@ const DevsList = ({ devs }: DevsListProps) => {
       <div className="grid place-items-center">
         <h1>OUR BACK-END DEVELOPERS</h1>
       </div>
-      <div className=" grid grid-cols-4 gap-2 place-items-center">
-        <div>
-          {devs.length ? (
-            devs.map((dev) => (
-              <DevCard
-                image={
-                  <Image
-                    src={`${dev.profile_image}`}
-                    alt="dev image"
-                    width={500}
-                    height={500}
-                    className="w-full h-full rounded-full"
-                  />
-                }
-                id={`${dev.id}`}
-                name={`${dev.name}`}
-                discription={truncateDescription(`${dev.discription}`, 100)}
-                languages={`${dev.languages}`}
-              />
-            ))
-          ) : (
+
+      <div className="grid grid-cols-3  place-items-center">
+        {devs.length ? (
+          devs.map((dev) => (
+            <DevCard
+              image={
+                <Image
+                  src={`${dev.profile_image}`}
+                  alt={`${dev.name} Profile image`}
+                  width={500}
+                  height={500}
+                  className="w-full h-full rounded-full"
+                />
+              }
+              id={`${dev.id}`}
+              name={`${dev.name}`}
+              discription={truncateDescription(`${dev.discription}`, 100)}
+              languages={`${dev.languages}`}
+            />
+          ))
+        ) : (
+          <div className="w-full">
             <p>There is not yet Back-end software yet</p>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client"
+import { FormField } from "@/components/FormField"
 import { Loader } from "@/components/Loader"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast"
 import "@/styles/globals.scss"
 import { signIn } from "next-auth/react"
@@ -99,18 +99,21 @@ const signInPage = () => {
             <h1>Log in</h1>
 
             <p>Enter your details to log in to your account</p>
-            <Input
+            <FormField
+              label="Email"
+              type="email"
               value={email}
               placeholder="Enter your Email"
-              type="email"
               onChange={(e) => setEmail(e.target.value)}
             />
-            <Input
+            <FormField
+              label="Password"
+              type="password"
               value={password}
               placeholder="Enter your password"
-              type="password"
               onChange={(e) => setPassword(e.target.value)}
             />
+
             {isLoading ? (
               <div className="px-4 py-4 flex justify-center w-full bg-blue-400 ">
                 <Loader className="" />

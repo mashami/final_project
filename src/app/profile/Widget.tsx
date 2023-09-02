@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
-import { create } from "@/services/api"
+import { create, deleteApi } from "@/services/api"
 import { updateDescription, updateLanguage, updateName } from "@/services/user"
 import { fileToDataURI2 } from "@/utils/helpers"
 import { Api } from "@prisma/client"
@@ -43,18 +43,25 @@ interface DevProfileWidgetProps {
 }
 
 const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
+  const [isEditingName, setIsEditingName] = useState<boolean>(false)
+  const [isEditingLang, setIsEditingLang] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [name, setName] = useState<string>(user.name ?? "")
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const [languanges, setLanguanges] = useState<string>(user.languages ?? "")
   const [description, setDescription] = useState<string>(user.discription ?? "")
+  const [price, setPrice] = useState<string>("")
   const [isPending, startTransition] = useTransition()
   const [selectedCategory, setSelectedCategory] = useState<string>("")
   const [title, setTitle] = useState<string>("")
+  const [accessToken, setAccessToken] = useState<string>("")
   const [discription, setDiscription] = useState<string>("")
   const [language, setLanguange] = useState<string>("")
   const [hostedLink, setHostedLink] = useState<string>("")
   const [uploadedFile, setUploadedFile] = useState<string>("")
+  const [isPrivate, setIsPrivate] = useState<boolean>(false)
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const router = useRouter()
 
   const isMutating = isLoading || isPending
@@ -63,14 +70,21 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
     if (isMutating) return
 
     setName(user.name ?? "")
-    setIsEditing(false)
+    setIsEditingName(false)
+  }
+
+  const SelectHandle = (value: string) => {
+    if (value == "Private") {
+      return setIsPrivate(true)
+    }
+    return setIsPrivate(false)
   }
 
   const onCanceltolanguage = () => {
     if (isMutating) return
 
     setName(user.languages ?? "")
-    setIsEditing(false)
+    setIsEditingLang(false)
   }
   const onCancelDescription = () => {
     if (isMutating) return
@@ -117,7 +131,7 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
         })
 
         setIsLoading(false)
-        setIsEditing(false)
+        setIsEditingName(false)
       })
     } catch (error) {
       toast({
@@ -171,7 +185,7 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
         })
 
         setIsLoading(false)
-        setIsEditing(false)
+        setIsEditingLang(false)
       })
     } catch (error) {
       toast({
@@ -240,10 +254,18 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    event.stopPropagation()
     const file = event.target.files?.[0]
 
     if (!file) {
       return null
+    }
+
+    if (!file.name.endsWith(".mdx")) {
+      return toast({
+        variant: "destructive",
+        description: "You must provide an MDX file only."
+      })
     }
 
     const uri = (await fileToDataURI2(file)) as any
@@ -255,6 +277,7 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
 
   const addApiHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
     if (
       !title ||
       !discription ||
@@ -268,7 +291,18 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
         description: "All field required"
       })
     }
+
+    if (isPrivate) {
+      if (!accessToken || !price) {
+        return toast({
+          variant: "destructive",
+          description: "Price and Accesstoken required"
+        })
+      }
+    }
+
     setIsLoading(true)
+
     try {
       const data = await create({
         ownerId: user.id,
@@ -277,7 +311,64 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
         apiUrl: uploadedFile,
         discription: discription,
         title,
-        languages: language
+        languages: language,
+        price,
+        accessToken
+      })
+
+      if (data.error) {
+        toast({
+          variant: "destructive",
+          description: data.message
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+
+      startTransition(() => {
+        router.refresh()
+
+        toast({
+          description: data.message
+        })
+        setAccessToken("")
+        setDescription("")
+        setHostedLink("")
+        setIsEditing(false)
+        setLanguange("")
+        setIsPrivate(false)
+        setName("")
+        setPrice("")
+        setTitle("")
+        setIsDialogOpen(false)
+        setIsLoading(false)
+      })
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "An error occured. Please try again."
+      })
+
+      setIsLoading(false)
+    }
+  }
+
+  const deleteHandler = async (apiId: string) => {
+    if (!user.id || !apiId) {
+      toast({
+        variant: "destructive",
+        description: "user Id and api Id must be provided"
+      })
+    }
+
+    setIsLoading(true)
+
+    try {
+      const data = await deleteApi({
+        userId: user.id,
+        apiId
       })
 
       if (data.error) {
@@ -299,6 +390,7 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
         })
 
         setIsLoading(false)
+        setIsEditing(false)
       })
     } catch (error) {
       toast({
@@ -311,331 +403,376 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
   }
 
   return (
-    <div>
-      <div className="">
-        <NavBar />
-      </div>
+    <>
+      <div>
+        <div className="">
+          <NavBar />
+        </div>
 
-      <div className="py-8 px-4 flex justify-between  ">
-        <div className=" w-96 h-full grid place-items-center py-8 space-y-4">
-          <div className="grid gap-2 place-items-center">
-            <ProfileImageUpload
-              profileImage={user.profile_image ?? ""}
-              userId={user.id}
-            />
+        <div className="py-8 px-4 flex justify-between  ">
+          <div className=" w-96 h-full grid place-items-center py-8 space-y-4">
+            <div className="grid gap-2 place-items-center w-full">
+              <ProfileImageUpload
+                profileImage={user.profile_image ?? ""}
+                userId={user.id}
+              />
 
-            <span className="space-y-1 font-serif text-center">
-              {!user.name ? (
-                <div className=" w-full flex items-center justify-between">
-                  {isEditing ? (
-                    <span className="flex items-start justify-center space-x-4">
-                      <Input
-                        value={name}
-                        placeholder="Enter you name"
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                      {isLoading ? (
-                        <Loader />
-                      ) : (
-                        <span
-                          className="cursor-pointer hover:opacity-75 transition"
-                          onClick={changeName}
+              <span className="space-y-8 font-serif text-center w-full">
+                {isEditingName ? (
+                  <span className="flex items-start justify-center space-x-4">
+                    <Input
+                      value={name}
+                      placeholder="Enter you name"
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    {isLoading ? (
+                      <Loader />
+                    ) : (
+                      <span
+                        className="cursor-pointer hover:opacity-75 transition"
+                        onClick={changeName}
+                      >
+                        <svg
+                          className="fill-green-500"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={22}
+                          height={22}
+                          viewBox="0 0 256 256"
                         >
-                          <svg
-                            className="fill-green-500"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={22}
-                            height={22}
-                            viewBox="0 0 256 256"
-                          >
-                            <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z" />
-                          </svg>
-                        </span>
-                      )}
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-between space-x-4">
-                      <p>Add your name</p>{" "}
-                      <span onClick={() => setIsEditing(true)}>
-                        <Icon title="edit" />
+                          <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z" />
+                        </svg>
                       </span>
+                    )}
+                  </span>
+                ) : (
+                  <div className="flex justify-center   items-center w-full relative">
+                    {user.name ? (
+                      <p className=" font-semibold">{user.name}</p>
+                    ) : (
+                      <p>Add user name</p>
+                    )}
+
+                    <span
+                      key={user.name}
+                      className=" flex-wrap flex-none absolute right-16"
+                      onClick={() => setIsEditingName(true)}
+                    >
+                      <Icon title="edit" />
+                    </span>
+                  </div>
+                )}
+                {isEditingLang ? (
+                  <span className="flex items-start justify-center space-x-4">
+                    <Input
+                      value={languanges}
+                      placeholder="Enter you name"
+                      onChange={(e) => setLanguanges(e.target.value)}
+                    />
+                    {isLoading ? (
+                      <Loader />
+                    ) : (
+                      <span
+                        className="cursor-pointer hover:opacity-75 transition"
+                        onClick={changeLanguangeHandler}
+                      >
+                        <svg
+                          className="fill-green-500"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={22}
+                          height={22}
+                          viewBox="0 0 256 256"
+                        >
+                          <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z" />
+                        </svg>
+                      </span>
+                    )}
+                  </span>
+                ) : (
+                  <div className="flex justify-center   items-center w-full relative">
+                    {user.languages ? (
+                      <p className="opacity-60">{user.languages}</p>
+                    ) : (
+                      <p>Add Langueges</p>
+                    )}
+
+                    <span
+                      key={user.languages}
+                      className=" flex-wrap flex-none absolute right-16"
+                      onClick={() => setIsEditingLang(true)}
+                    >
+                      <Icon title="edit" />
+                    </span>
+                  </div>
+                )}
+              </span>
+            </div>
+            <div className="space-y-4 ">
+              <p className="font-serif font-bold text-center">Your Socials</p>
+              <div className="space-y-4">
+                <span className="flex gap-2 justify-start px-4">
+                  <p>LinkdIn: </p>
+                  <a
+                    className="text-sm text-purple-400"
+                    href={`${user.linkedin}`}
+                  >
+                    {user.linkedin}
+                  </a>
+                </span>
+                <span className="flex gap-2 justify-start px-4">
+                  <p>GitHub:</p>
+                  <a
+                    className="text-sm text-purple-400"
+                    href={`${user.github}`}
+                  >
+                    {user.github}
+                  </a>
+                </span>
+                <span className="flex gap-2 justify-start px-4">
+                  <p>Email:</p>
+                  <a className="text-sm text-purple-400" href={`${user.email}`}>
+                    {user.email}
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="z-0 space-y-12 px-4">
+            <span className="text-center space-y-4 ">
+              <h1>Description</h1>
+              {isEditing ? (
+                <div className="w-full flex justify-center items-center">
+                  <textarea
+                    value={description}
+                    placeholder="Describe youself"
+                    className="mx-4 py-12 w-full flex items-center justify-center flex-1 outline-none  bg-transparent"
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                  {isLoading ? (
+                    <Loader />
+                  ) : (
+                    <span
+                      className="cursor-pointer hover:opacity-75 transition"
+                      onClick={changeDescriptionHandler}
+                    >
+                      <svg
+                        className="fill-green-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={22}
+                        height={22}
+                        viewBox="0 0 256 256"
+                      >
+                        <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z" />
+                      </svg>
                     </span>
                   )}
                 </div>
               ) : (
-                <p className=" font-semibold">{user.name}</p>
-              )}
-              {!user.languages ? (
-                <div className=" w-full flex items-center justify-between">
-                  {isEditing ? (
-                    <span className="flex items-start justify-center space-x-4">
-                      <Input
-                        value={languanges}
-                        placeholder="Enter you all languanges"
-                        onChange={(e) => setLanguanges(e.target.value)}
-                      />
-                      {isLoading ? (
-                        <Loader />
-                      ) : (
-                        <span
-                          className="cursor-pointer hover:opacity-75 transition"
-                          onClick={changeLanguangeHandler}
-                        >
-                          <svg
-                            className="fill-green-500"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={22}
-                            height={22}
-                            viewBox="0 0 256 256"
-                          >
-                            <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z" />
-                          </svg>
-                        </span>
-                      )}
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-between space-x-4">
-                      <p>Add your languanges</p>{" "}
-                      <span onClick={() => setIsEditing(true)}>
-                        <Icon title="edit" />
-                      </span>
-                    </span>
-                  )}
+                <div className="flex gap-6">
+                  <p className="px-20"> {user.discription}</p>
+                  <span
+                    key={user.languages}
+                    className=" flex-wrap flex-none absolute right-16"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Icon title="edit" />
+                  </span>
                 </div>
-              ) : (
-                <p className=" text-gray-500">{user.languages}</p>
               )}
             </span>
-          </div>
-          <div className="space-y-4 ">
-            <p className="font-serif font-bold text-center">Your Socials</p>
-            <div className="space-y-4">
-              <span className="flex gap-2 justify-start px-4">
-                <p>LinkdIn: </p>
-                <a
-                  className="text-sm text-purple-400"
-                  href={`${user.linkedin}`}
-                >
-                  {user.linkedin}
-                </a>
-              </span>
-              <span className="flex gap-2 justify-start px-4">
-                <p>GitHub:</p>
-                <a className="text-sm text-purple-400" href={`${user.github}`}>
-                  {user.github}
-                </a>
-              </span>
-              <span className="flex gap-2 justify-start px-4">
-                <p>Email:</p>
-                <a className="text-sm text-purple-400" href={`${user.email}`}>
-                  {user.email}
-                </a>
-              </span>
+            <div className="flex-grow-0 flex justify-between items-center ">
+              <h1>APIs</h1>
+              <Button text="Add API" className="rounded-lg" />
+            </div>
+
+            <div className=" grid grid-cols-3 gap-2 relative">
+              {getApiUser.length ? (
+                getApiUser.map((api) => {
+                  const randomIndex = Math.floor(Math.random() * svgs.length)
+
+                  return (
+                    <Link
+                      href={`/getApi/[id]`}
+                      as={`getApi/${api.id}`}
+                      className="bg-transparent border-b-1 relative group"
+                    >
+                      <Card
+                        title={api.title}
+                        desc={api.discription}
+                        svg={svgs[randomIndex]}
+                      />
+                      {isLoading ? (
+                        <div className="px-4 py-4 flex justify-center absolute bottom-0 right-8 bg-red-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Loader />
+                        </div>
+                      ) : (
+                        <Button
+                          text="Delete"
+                          className="absolute bottom-0 right-8 bg-red-500 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-300"
+                          onClick={() => deleteHandler(api.id)}
+                          loading={isLoading}
+                        />
+                      )}
+                    </Link>
+                  )
+                })
+              ) : (
+                <p>You do not have API added yet</p>
+              )}
+            </div>
+            <div className="absolute bottom-3 right-[30%] -z-10">
+              <svg
+                width={184}
+                height={17}
+                viewBox="0 0 184 17"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx={8} cy="8.5" r={8} fill="#2639ED" />
+                <circle cx={50} cy="8.5" r={8} fill="#E7F0FC" />
+                <circle cx={92} cy="8.5" r={8} fill="#E7F0FC" />
+                <circle cx={134} cy="8.5" r={8} fill="#E7F0FC" />
+                <circle cx={176} cy="8.5" r={8} fill="#E7F0FC" />
+              </svg>
             </div>
           </div>
         </div>
-
-        <div className="z-0 space-y-12 px-4">
-          <span className="text-center space-y-4 ">
-            <h1>Description</h1>
-            {!user.discription ? (
-              <div className="">
-                <textarea
-                  value={description}
-                  placeholder="Describe youself"
-                  className="mx-4 py-12 w-full flex items-center justify-center flex-1 outline-none  bg-transparent"
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-                {isLoading ? (
-                  <Loader />
-                ) : (
-                  <span
-                    className="cursor-pointer hover:opacity-75 transition"
-                    onClick={changeDescriptionHandler}
-                  >
-                    <svg
-                      className="fill-green-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={22}
-                      height={22}
-                      viewBox="0 0 256 256"
-                    >
-                      <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z" />
-                    </svg>
-                  </span>
-                )}
-              </div>
-            ) : (
-              <p className="px-20"> {user.discription}</p>
-            )}
-          </span>
-          <div className="flex-grow-0 flex justify-between items-center ">
-            <h1>APIs</h1>
-            <Dialog>
-              <DialogTrigger>
-                <Button text="Add API" className="rounded-lg" />
-              </DialogTrigger>
-
-              <DialogContent className="Background">
-                <Logo />
-                <DialogHeader className="flex w-full items-center justify-center space-y-8">
-                  <DialogTitle className="text-black font-serif leading-4">
-                    Add API
-                  </DialogTitle>
-                  <DialogDescription>
-                    <form
-                      onSubmit={addApiHandler}
-                      className="flex flex-col space-y-4 "
-                    >
-                      <span className="space-y-2">
-                        <Label>API Title</Label>
-                        <Input
-                          type="text"
-                          id="title"
-                          onChange={(e) => setTitle(e.target.value)}
-                          placeholder="Enter a title of your API"
-                        />
-                      </span>
-                      <span className="space-y-2">
-                        <Label>API discription</Label>
-                        <Textarea
-                          id="title"
-                          onChange={(e) => setDiscription(e.target.value)}
-                          placeholder="Enter a simple description"
-                        />
-                      </span>
-                      <span className="space-y-2">
-                        <Label>API Language</Label>
-                        <Input
-                          type="text"
-                          onChange={(e) => setLanguange(e.target.value)}
-                          id="language"
-                          placeholder="Enter the language used for this API"
-                        />
-                      </span>
-                      <Select
-                        onValueChange={(value) => setSelectedCategory(value)}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select Category" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white  ">
-                          <SelectGroup>
-                            <SelectLabel>Category</SelectLabel>
-                            {options.map((item) => (
-                              <SelectItem
-                                className="text-sm hover:bg-purple-50 "
-                                key={item.value}
-                                value={item.value}
-                              >
-                                {item.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-
-                      {selectedCategory === "private" && (
-                        <div className="space-y-2">
-                          <Label>Price</Label>
-                          <Input
-                            type="number"
-                            id="price"
-                            placeholder="Enter the price"
-                          />
-                        </div>
-                      )}
-
-                      {selectedCategory === "private" && (
-                        <div className="space-y-2">
-                          <Label>Access Token</Label>
-                          <Input
-                            type="text"
-                            id="accessToken"
-                            placeholder="Enter the access token"
-                          />
-                        </div>
-                      )}
-
-                      <span className="space-y-2">
-                        <Label>Api Documentation Link </Label>
-                        <Input
-                          type="text"
-                          onChange={(e) => setHostedLink(e.target.value)}
-                          id="link"
-                          placeholder="Enter hosted Link"
-                        />
-                      </span>
-
-                      <span className="space-y-2">
-                        <Label>API description md file</Label>
-                        <Input
-                          id="description"
-                          type="file"
-                          // accept=".mdx"
-                          onChange={handleFileChange}
-                          max={1}
-                        />
-                      </span>
-
-                      <span className="flex-grow-0 self-end">
-                        {isLoading ? (
-                          <div className="bg-purple-400 w-14 px-12 py-3 grid place-content-center rounded-lg">
-                            {" "}
-                            <Loader />
-                          </div>
-                        ) : (
-                          <Button
-                            text="Add API"
-                            loading={isLoading}
-                            className="rounded-lg"
-                          />
-                        )}
-                      </span>
-                    </form>
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          <div className=" grid grid-cols-3 gap-2 relative">
-            {getApiUser.length ? (
-              getApiUser.map((api) => {
-                const randomIndex = Math.floor(Math.random() * svgs.length)
-
-                return (
-                  <Link href={""}>
-                    <Card
-                      title={api.title}
-                      desc={api.discription}
-                      svg={svgs[randomIndex]}
-                    />
-                  </Link>
-                )
-              })
-            ) : (
-              <p>You do not have API added yet</p>
-            )}
-          </div>
-          <div className="absolute bottom-3 right-[30%] -z-10">
-            <svg
-              width={184}
-              height={17}
-              viewBox="0 0 184 17"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx={8} cy="8.5" r={8} fill="#2639ED" />
-              <circle cx={50} cy="8.5" r={8} fill="#E7F0FC" />
-              <circle cx={92} cy="8.5" r={8} fill="#E7F0FC" />
-              <circle cx={134} cy="8.5" r={8} fill="#E7F0FC" />
-              <circle cx={176} cy="8.5" r={8} fill="#E7F0FC" />
-            </svg>
-          </div>
-        </div>
       </div>
-    </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger></DialogTrigger>
+
+        <DialogContent className="Background">
+          <Logo />
+          <DialogHeader className="flex w-full items-center justify-center space-y-8">
+            <DialogTitle className="text-black font-serif leading-4">
+              Add API
+            </DialogTitle>
+            <DialogDescription>
+              <form
+                onSubmit={addApiHandler}
+                className="flex flex-col space-y-4 "
+              >
+                <span className="space-y-2">
+                  <Label>API Title</Label>
+                  <Input
+                    type="text"
+                    id="title"
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Enter a title of your API"
+                  />
+                </span>
+                <span className="space-y-2">
+                  <Label>API discription</Label>
+                  <Textarea
+                    id="title"
+                    onChange={(e) => setDiscription(e.target.value)}
+                    placeholder="Enter a simple description"
+                  />
+                </span>
+                <span className="space-y-2">
+                  <Label>API Language</Label>
+                  <Input
+                    type="text"
+                    onChange={(e) => setLanguange(e.target.value)}
+                    id="language"
+                    placeholder="Enter the language used for this API"
+                  />
+                </span>
+                <Select
+                  onValueChange={(value) => {
+                    setSelectedCategory(value)
+                    SelectHandle(value)
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white  ">
+                    <SelectGroup>
+                      <SelectLabel>Category</SelectLabel>
+                      {options.map((item) => (
+                        <SelectItem
+                          className="text-sm hover:bg-purple-50 "
+                          key={item.value}
+                          value={item.value}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+
+                {isPrivate && (
+                  <div className="space-y-2">
+                    <Label>Price</Label>
+                    <Input
+                      type="text"
+                      id="price"
+                      placeholder="Enter the price"
+                      value={price}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, "")
+                        setPrice(Number(value).toLocaleString())
+                      }}
+                    />
+                  </div>
+                )}
+
+                {isPrivate && (
+                  <div className="space-y-2">
+                    <Label>Access Token</Label>
+                    <Input
+                      type="text"
+                      id="accessToken"
+                      value={accessToken}
+                      placeholder="Enter the access token"
+                      onChange={(e) => setAccessToken(e.target.value)}
+                    />
+                  </div>
+                )}
+
+                <span className="space-y-2">
+                  <Label>Api Documentation Link </Label>
+                  <Input
+                    type="text"
+                    onChange={(e) => setHostedLink(e.target.value)}
+                    id="link"
+                    placeholder="Enter hosted Link"
+                  />
+                </span>
+
+                <span className="space-y-2">
+                  <Label>API description md file</Label>
+                  <Input
+                    id="description"
+                    type="file"
+                    accept=".mdx"
+                    onChange={handleFileChange}
+                    max={1}
+                  />
+                </span>
+
+                <span className="flex-grow-0 self-end">
+                  {isLoading ? (
+                    <div className="bg-purple-400 w-14 px-12 py-3 grid place-content-center rounded-lg">
+                      {" "}
+                      <Loader />
+                    </div>
+                  ) : (
+                    <Button
+                      text="Add API"
+                      loading={isLoading}
+                      className="rounded-lg"
+                    />
+                  )}
+                </span>
+              </form>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
