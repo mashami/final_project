@@ -32,7 +32,7 @@ export interface SocialsName {
 }
 
 export interface createApi {
-  ownerId: string
+  ownerId: String
   title: String
   discription: String
   languages: String

@@ -171,3 +171,42 @@ export const deleteApi = async ({
 
   return result
 }
+
+export const requestApi = async ({
+  email,
+  phoneNumber,
+  numberPay,
+  camponyName,
+  description,
+  problemStatment,
+  amount
+}: {
+  email: string
+  numberPay: string
+  phoneNumber: string
+  camponyName: string
+  description: string
+  problemStatment: string
+  amount: number
+}) => {
+  console.log("My statment===>", problemStatment)
+
+  const response = await fetch(`/api/apise/request`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email,
+      phoneNumber,
+      numberPay,
+      camponyName,
+      description,
+      problemStatment,
+      amount
+    }),
+    cache: "no-store"
+  })
+
+  const result = await response.json()
+
+  return result
+}

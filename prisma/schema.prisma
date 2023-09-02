@@ -42,14 +42,39 @@ model Api {
   imageId     String?
   apiUrl      String
   apiId       String
-  payment     Json? @default("[]")
-  apiCategory    ApiCategory      @default(Public)
+  apiCategory  ApiCategory      @default(Public)
   category     Category           @default(IoT)
   apiStatus   ApiStatus  @default(Unctive)
   ownerId     String   @db.ObjectId
   owner       User     @relation(fields: [ownerId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
+}
+
+
+model Request {
+   id              String   @id @default(auto()) @map("_id") @db.ObjectId
+   email           String
+   phoneNumber     String
+   description     String
+   probleStatmentUrl  String
+   probleStatmentId  String
+   createdAt       DateTime @default(now())
+   updatedAt       DateTime @default(now())
+
+}
+
+
+model Payment {
+   id              String   @id @default(auto()) @map("_id") @db.ObjectId
+   email           String
+   phoneNumber     String 
+   paymentRef      String
+   requestId       String?  
+   ApiId           String?  
+   createdAt       DateTime @default(now())
+   updatedAt       DateTime @default(now())
+
 }
 
 
