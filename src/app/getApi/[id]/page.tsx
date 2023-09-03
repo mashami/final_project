@@ -23,7 +23,7 @@ const page = async ({ params: { id } }: PageProps) => {
   const markdownHtml = processedContent.toString()
 
   // console.log(String(compiled))
-  // console.log("my markdown   =>>>>", markdown)
+  console.log("my markdown   =>>>>", markdown)
 
   return (
     <div>

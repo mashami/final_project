@@ -69,6 +69,13 @@ const HomeWidget = ({ apis }: HomeWidgetProps) => {
       return null
     }
 
+    if (!file.name.endsWith(".txt")) {
+      return toast({
+        variant: "destructive",
+        description: "You must provide an MDX file only."
+      })
+    }
+
     const uri = (await fileToDataURI2(file)) as any
 
     if (uri?.error) return console.log(uri.error)
@@ -255,6 +262,7 @@ const HomeWidget = ({ apis }: HomeWidgetProps) => {
                     id="problemStatment"
                     type="file"
                     onChange={handleFileChange}
+                    accept=".txt"
                     max={1}
                   />
                 </span>

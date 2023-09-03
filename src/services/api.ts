@@ -210,3 +210,29 @@ export const requestApi = async ({
 
   return result
 }
+
+export const getRequests = async () => {
+  const response = await fetch(
+    process.env.APP_URL + `/api/apise/get-requests`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store"
+    }
+  )
+
+  const result = await response.json()
+
+  return result
+}
+
+export const getRequest = async (requestId: string) => {
+  const response = await fetch(process.env.APP_URL + `/api/apise/get-request`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ requestId }),
+    cache: "no-store"
+  })
+  const result = await response.json()
+  return result
+}

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import cloudinary from "@/utils/cloudinary"
 import { HttpStatusCode } from "@/utils/enums"
+import { sendMail } from "@/utils/mailService"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
@@ -73,6 +74,7 @@ export async function POST(req: Request) {
           email,
           description,
           phoneNumber,
+          company: camponyName,
           probleStatmentUrl: uploadedFile.secure_url,
           probleStatmentId: uploadedFile.public_id
         }
@@ -94,11 +96,11 @@ export async function POST(req: Request) {
         }
       })
 
-      // await sendMail(
-      //   "REQUEST API",
-      //   email,
-      //   `You have raised a request for an API on our platform @IHUZO 😇. We appreciate your participation and hope you will patiently await a response from our Back-end developer 🤝.`
-      // )
+      await sendMail(
+        "REQUEST API",
+        email,
+        `You have raised a request for an API on our platform @IHUZO 😇. We appreciate your participation and hope you will patiently await a response from our Back-end developer 🤝.`
+      )
 
       return NextResponse.json(
         {
