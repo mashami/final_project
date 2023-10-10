@@ -26,12 +26,14 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
-import { create, deleteApi } from "@/services/api"
+import { cn } from "@/lib/utils"
+import { AddContributors, create, deleteApi } from "@/services/api"
 import { updateDescription, updateLanguage, updateName } from "@/services/user"
-import { fileToDataURI2 } from "@/utils/helpers"
-import { Api } from "@prisma/client"
+import { fileToDataURI2, truncateDescription } from "@/utils/helpers"
+import { Api, Request } from "@prisma/client"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
@@ -40,9 +42,14 @@ import { UserWithRelations } from "./page"
 interface DevProfileWidgetProps {
   user: UserWithRelations
   getApiUser: Api[]
+  requests: Request[]
 }
 
-const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
+const DevProfileWidget = ({
+  user,
+  getApiUser,
+  requests
+}: DevProfileWidgetProps) => {
   const [isEditingName, setIsEditingName] = useState<boolean>(false)
   const [isEditingLang, setIsEditingLang] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -402,9 +409,59 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
     }
   }
 
+  const addContributorHandle = async (requestId: string) => {
+    console.log("hello")
+
+    if (!requestId) {
+      return toast({
+        variant: "destructive",
+        description: "request Id should be provided"
+      })
+    }
+
+    console.log("userId===>", user.id, "requestId====>", requestId)
+
+    setIsLoading(true)
+
+    try {
+      const data = await AddContributors({
+        requestId,
+        userId: user.id
+      })
+
+      if (data.error) {
+        toast({
+          variant: "destructive",
+          description: data.message
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+
+      startTransition(() => {
+        router.refresh()
+
+        toast({
+          description: data.message
+        })
+
+        setIsLoading(false)
+      })
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "An error occured. Please try again."
+      })
+
+      setIsLoading(false)
+    }
+  }
+
   return (
     <>
-      <div>
+      <div className="relative">
         <div className="">
           <NavBar />
         </div>
@@ -620,7 +677,51 @@ const DevProfileWidget = ({ user, getApiUser }: DevProfileWidgetProps) => {
                 <p>You do not have API added yet</p>
               )}
             </div>
-            <div className="absolute bottom-3 right-[30%] -z-10">
+            <div className="space-y-5">
+              <h1 className="mt-12">List of Request APIs</h1>
+              <Table className=" rounded-md border">
+                <TableBody>
+                  <TableRow className="text-center text-base font-semibold text-purple-500">
+                    <TableCell>Company</TableCell>
+                    <TableCell>Descriptions</TableCell>
+                    <TableCell>Contributors</TableCell>
+                  </TableRow>
+
+                  {requests.map((request) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <TableRow key={request.id} className=" text-center  ">
+                      <TableCell key={request.id}>{request.company}</TableCell>
+                      <TableCell key={request.id}>
+                        <Link
+                          href={`/getRequest/[id]`}
+                          as={`getRequest/${request.id}`}
+                        >
+                          {truncateDescription(`${request.description}`, 20)}{" "}
+                        </Link>
+                      </TableCell>
+                      <TableCell key={request.id}>
+                        {request.contributors.length}
+                      </TableCell>
+                      <TableCell
+                        key={request.id}
+                        className="flex items-center justify-center space-x-4"
+                      >
+                        <Button
+                          text={cn(
+                            isLoading ? "Contributing..." : "Contribute"
+                          )}
+                          variant={"destructive"}
+                          className="bg-purple-500 rounded-lg hover:bg-purple-300"
+                          loading={isLoading}
+                          onClick={() => addContributorHandle(request.id)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <div className="absolute bottom-0 right-[30%] -z-10">
               <svg
                 width={184}
                 height={17}

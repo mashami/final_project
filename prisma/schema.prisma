@@ -26,6 +26,8 @@ model User {
   languages            String? 
   discription         String?
   apis               Api[]
+  // requestId          String   @db.ObjectId
+  // requestsAsContributor Request?  @relation(fields: [requestId], references: [id])
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @default(now())    
 }
@@ -47,21 +49,24 @@ model Api {
   apiStatus   ApiStatus  @default(Unctive)
   ownerId     String   @db.ObjectId
   owner       User     @relation(fields: [ownerId], references: [id])
+  payment     Payment[]  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
 }
 
 
 model Request {
-   id              String   @id @default(auto()) @map("_id") @db.ObjectId
-   email           String
-   phoneNumber     String
-   company         String   @default("")
-   description     String
+   id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+   email              String
+   phoneNumber        String
+   company            String   @default("")
+   status             RequestStatus   @default(Active)
+   description        String
+   contributors        String[]  @default([""])
    probleStatmentUrl  String
-   probleStatmentId  String
-   createdAt       DateTime @default(now())
-   updatedAt       DateTime @default(now())
+   probleStatmentId   String
+   createdAt          DateTime @default(now())
+   updatedAt          DateTime @default(now())
 
 }
 
@@ -72,7 +77,8 @@ model Payment {
    phoneNumber     String 
    paymentRef      String
    requestId       String?  
-   ApiId           String?  
+   ApiId           String?  @db.ObjectId
+   Api             Api?    @relation(fields: [ApiId], references: [id])
    createdAt       DateTime @default(now())
    updatedAt       DateTime @default(now())
 
@@ -87,6 +93,8 @@ enum Status {
   User
   Dev
 }
+
+ 
 
 enum Category { 
   Payment
@@ -120,8 +128,14 @@ enum DevStatus {
   Unctive
 
 }
+enum RequestStatus {
+  Active
+  Unctive
+
+}
 enum ApiStatus {
   Active
   Unctive
 
 }
+

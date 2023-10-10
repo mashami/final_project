@@ -15,23 +15,6 @@ export async function POST(req: Request) {
     amount
   } = await req.json()
 
-  // console.log(
-  //   "Email ==>",
-  //   email,
-  //   "phoneNumber ==>",
-  //   phoneNumber,
-  //   "numberPay ==>",
-  //   numberPay,
-  //   "camponyName ==>",
-  //   camponyName,
-  //   "description ==>",
-  //   description,
-  //   "problemStatment ==>",
-  //   problemStatment,
-  //   "amount ==>",
-  //   amount
-  // )
-
   if (
     !email ||
     !numberPay ||
@@ -104,8 +87,8 @@ export async function POST(req: Request) {
 
       return NextResponse.json(
         {
-          error: true,
-          message: "Your request has been saved successfully!! 😇"
+          success: true,
+          message: "Your request has been saved successfully!!"
         },
         { status: HttpStatusCode.OK }
       )

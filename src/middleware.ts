@@ -2,7 +2,7 @@ export { default } from "next-auth/middleware"
 import { getToken } from "next-auth/jwt"
 import { NextRequest, NextResponse } from "next/server"
 export const config = {
-  matcher: ["/dev-profile/:path* "]
+  matcher: ["/dev-profile/:path* ", "/payment/:path"]
 }
 
 export async function middleware(req: NextRequest) {

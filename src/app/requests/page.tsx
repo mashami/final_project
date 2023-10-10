@@ -1,9 +1,9 @@
-import { getRequests } from "@/services/api"
+import { getRequestActive } from "@/services/api"
 import { Request } from "@prisma/client"
 import RequestWidget from "./Widget"
 
 const page = async () => {
-  const requestData = await getRequests()
+  const requestData = await getRequestActive()
 
   const requests = requestData.requests as Request[]
 

@@ -71,10 +71,12 @@ const RequestWidget = ({ requests }: RequestWidgetProps) => {
                 <p className="text-black">
                   {truncateDescription(`${request.description}`, 28)}
                 </p>
-                <p className="text-black">{request.company}</p>
+                <p className="text-black font-bold text-base">
+                  {request.company}
+                </p>
                 <span className=" w-full flex justify-start items-center space-x-2">
                   <p>Contributors</p>
-                  <p className="px-1 border font-bold">1</p>
+                  <p className="px-1 border font-bold">0</p>
                 </span>
 
                 <p className="w-full flex justify-end text-gray-400">

@@ -236,3 +236,91 @@ export const getRequest = async (requestId: string) => {
   const result = await response.json()
   return result
 }
+
+export const getRequestActive = async () => {
+  const response = await fetch(
+    process.env.APP_URL + `/api/apise/get-requests-active`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store"
+    }
+  )
+  const result = await response.json()
+  return result
+}
+
+export const changeRequestUnctive = async ({
+  requestId
+}: {
+  requestId: string
+}) => {
+  const response = await fetch(`/api/apise/update-request-unctive`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ requestId }),
+    cache: "no-store"
+  })
+  const result = await response.json()
+  return result
+}
+
+export const RequestActiveUpdate = async ({
+  requestId
+}: {
+  requestId: string
+}) => {
+  const response = await fetch(`/api/apise/update-request-active`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ requestId }),
+    cache: "no-store"
+  })
+  const result = await response.json()
+  return result
+}
+
+export const privateAPIPay = async ({
+  email,
+  phoneNumber,
+  apiId,
+  amount
+}: {
+  email: string
+  phoneNumber: string
+  apiId: string
+  amount: number
+}) => {
+  const response = await fetch(`/api/apise/private-api-pay`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email,
+      phoneNumber,
+      apiId,
+      amount
+    }),
+    cache: "no-store"
+  })
+
+  const result = await response.json()
+
+  return result
+}
+
+export const AddContributors = async ({
+  requestId,
+  userId
+}: {
+  requestId: string
+  userId: string
+}) => {
+  const response = await fetch(`/api/apise/update-contribute`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ requestId, userId }),
+    cache: "no-store"
+  })
+  const result = await response.json()
+  return result
+}

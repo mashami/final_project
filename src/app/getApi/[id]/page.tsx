@@ -1,5 +1,9 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { prisma } from "@/lib/prisma"
 import { getApi } from "@/services/api"
 import { Api, Prisma } from "@prisma/client"
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
 import { remark } from "remark"
 import html from "remark-html"
 import ApiWidget from "../Widget"
@@ -15,6 +19,25 @@ export type UserWithRelations = Prisma.UserGetPayload<{
 const page = async ({ params: { id } }: PageProps) => {
   const data = await getApi(id)
   const api = data.api as Api
+
+  if (api.apiCategory === "Private") {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return redirect("/signin")
+    }
+    const userId = session?.user?.id as string
+
+    const userPayment = await prisma.payment.findFirst({
+      where: {
+        email: session?.user?.email,
+        ApiId: api.id
+      }
+    })
+
+    if (!userPayment) {
+      return redirect(`/payment/${api.id}`)
+    }
+  }
 
   const res = await fetch(`${api.apiUrl}`)
   const markdown = await res.text()

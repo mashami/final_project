@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { toast } from "@/components/ui/use-toast"
 import { changeDevActive, changeDevUnActive } from "@/services/user"
-import { Api } from "@prisma/client"
+import { Api, Request } from "@prisma/client"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
@@ -23,16 +23,28 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { changeAPIActive, changeAPIUnActive } from "@/services/api"
+import { cn } from "@/lib/utils"
+import {
+  RequestActiveUpdate,
+  changeAPIActive,
+  changeAPIUnActive,
+  changeRequestUnctive
+} from "@/services/api"
+
+import { truncateDescription } from "@/utils/helpers"
 
 interface AdminDashboardProps {
   unctiveUser: UserWithRelations[]
   apiUnctive: Api[]
+  usersActiveted: UserWithRelations[]
+  requests: Request[]
 }
 
 export const AdminDashboard = ({
   unctiveUser,
-  apiUnctive
+  apiUnctive,
+  usersActiveted,
+  requests
 }: AdminDashboardProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isPending, startTransition] = useTransition()
@@ -194,6 +206,86 @@ export const AdminDashboard = ({
       setIsLoading(false)
     }
   }
+
+  const ChangeRequestUnctive = async (requestId: string) => {
+    if (!requestId) {
+      toast({
+        variant: "destructive",
+        description: "Request Id must be provided"
+      })
+    }
+    setIsLoading(true)
+    try {
+      const data = await changeRequestUnctive({ requestId })
+
+      if (data.error) {
+        toast({
+          variant: "destructive",
+          description: data.message
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+      startTransition(() => {
+        router.refresh()
+
+        toast({
+          description: data.message
+        })
+
+        setIsLoading(false)
+      })
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "An error occured. Please try again."
+      })
+
+      setIsLoading(false)
+    }
+  }
+
+  const ChangeRequestActive = async (requestId: string) => {
+    if (!requestId) {
+      toast({
+        variant: "destructive",
+        description: "Request Id must be provided"
+      })
+    }
+    setIsLoading(true)
+    try {
+      const data = await RequestActiveUpdate({ requestId })
+
+      if (data.error) {
+        toast({
+          variant: "destructive",
+          description: data.message
+        })
+
+        setIsLoading(false)
+
+        return
+      }
+      startTransition(() => {
+        router.refresh()
+
+        toast({
+          description: data.message
+        })
+
+        setIsLoading(false)
+      })
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "An error occured. Please try again."
+      })
+
+      setIsLoading(false)
+    }
+  }
   return (
     <div className="space-y-8">
       <NavBar />
@@ -206,7 +298,7 @@ export const AdminDashboard = ({
           {apiUnctive.length ? (
             <Table className=" rounded-lg border">
               <TableBody>
-                <TableRow className="text-center text-base font-semibold">
+                <TableRow className="text-center text-base font-semibold text-purple-500">
                   <TableCell>API Title</TableCell>
                   <TableCell>API Discription </TableCell>
                   <TableCell>Category</TableCell>
@@ -289,7 +381,7 @@ export const AdminDashboard = ({
               </TableBody>
             </Table>
           ) : (
-            <p>The is Api request yet</p>
+            <p>There is Api request yet</p>
           )}
         </div>
         <div className=" space-y-4 ">
@@ -385,7 +477,134 @@ export const AdminDashboard = ({
               </TableBody>
             </Table>
           ) : (
-            <p>There is not requst yet</p>
+            <p>There is not request yet</p>
+          )}
+        </div>
+        <div>
+          {usersActiveted.length && (
+            <div className="space-y-5">
+              <h1 className="mt-12">List of the Developers</h1>
+              <Table className=" rounded-md border">
+                <TableBody>
+                  <TableRow className="text-center text-base font-semibold">
+                    <TableCell>ID</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>User Name</TableCell>
+                  </TableRow>
+
+                  {usersActiveted.map((user) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <TableRow className=" text-center  ">
+                      <TableCell key={user.id}>{user.id}</TableCell>
+                      <TableCell key={user.id}>{user.email}</TableCell>
+                      <TableCell key={user.id}>{user.name ?? ""}</TableCell>
+                      <TableCell className="flex items-center justify-center space-x-4">
+                        <Dialog>
+                          <DialogTrigger>
+                            <Button
+                              text="Delete"
+                              variant={"destructive"}
+                              className="bg-red-500 rounded-lg hover:bg-red-400"
+                            />
+                          </DialogTrigger>
+
+                          <DialogContent className="Background">
+                            <Logo />
+                            <DialogHeader className="flex w-full px-8 justify-start space-y-8">
+                              <DialogTitle className="text-black font-serif leading-4">
+                                Provide the message for Delete a User
+                              </DialogTitle>
+                              <DialogDescription>
+                                <form
+                                  onSubmit={() => denyDev(user.id)}
+                                  className="flex flex-col space-y-4 mt-12"
+                                >
+                                  <span className="space-y-2 flex-1">
+                                    <Label>Message</Label>
+                                    <Textarea
+                                      id="title"
+                                      value={message}
+                                      onChange={(e) =>
+                                        setMessage(e.target.value)
+                                      }
+                                      placeholder="Enter message here"
+                                    />
+                                  </span>
+
+                                  <Button
+                                    text="Submit"
+                                    variant={"default"}
+                                    loading={isLoading}
+                                  />
+                                </form>
+                              </DialogDescription>
+                            </DialogHeader>
+                          </DialogContent>
+                        </Dialog>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+        <div>
+          {requests.length && (
+            <div className="space-y-5">
+              <h1 className="mt-12">List of Request APIs</h1>
+              <Table className=" rounded-md border">
+                <TableBody>
+                  <TableRow className="text-center text-base font-semibold text-purple-500">
+                    <TableCell>Company</TableCell>
+                    <TableCell>Descriptions</TableCell>
+                    <TableCell>Status</TableCell>
+                  </TableRow>
+
+                  {requests.map((request) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <TableRow className=" text-center  ">
+                      <TableCell key={request.id}>{request.company}</TableCell>
+                      <TableCell key={request.id}>
+                        <Link
+                          href={`/getRequest/[id]`}
+                          as={`getRequest/${request.id}`}
+                        >
+                          {truncateDescription(`${request.description}`, 20)}{" "}
+                        </Link>
+                      </TableCell>
+                      <TableCell
+                        key={request.id}
+                        className={cn(
+                          request.status === "Unctive" && "text-red-500"
+                        )}
+                      >
+                        {request.status}
+                      </TableCell>
+                      <TableCell className="flex items-center justify-center space-x-4">
+                        {request.status === "Active" ? (
+                          <Button
+                            text="Inactive"
+                            variant={"destructive"}
+                            className="bg-red-500 rounded-lg hover:bg-red-400"
+                            loading={isLoading}
+                            onClick={() => ChangeRequestUnctive(request.id)}
+                          />
+                        ) : (
+                          <Button
+                            text="Active"
+                            variant={"destructive"}
+                            className="bg-purple-500 rounded-lg hover:bg-purple-300"
+                            loading={isLoading}
+                            onClick={() => ChangeRequestActive(request.id)}
+                          />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </div>
       </div>

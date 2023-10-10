@@ -3,6 +3,7 @@
 import Card from "@/components/Card/Card"
 import { Devs } from "@/components/Devs"
 import { FormField } from "@/components/FormField"
+import { Loader } from "@/components/Loader"
 import { Logo } from "@/components/Logo"
 import NavBar from "@/components/NavBar/NavBar"
 import { Button } from "@/components/ui/button"
@@ -10,6 +11,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
@@ -72,7 +74,7 @@ const HomeWidget = ({ apis }: HomeWidgetProps) => {
     if (!file.name.endsWith(".txt")) {
       return toast({
         variant: "destructive",
-        description: "You must provide an MDX file only."
+        description: "You must provide an txt file only."
       })
     }
 
@@ -127,17 +129,18 @@ const HomeWidget = ({ apis }: HomeWidgetProps) => {
         toast({
           description: data.message
         })
-        setEmail("")
-        setDescription("")
-        setAmount(0)
-        setCompany("")
-        setNumberPay("")
-        setUploadedFile("")
-        setPhoneNumber("")
-        setIsDialogOpen(false)
-        setIsPaymentDialogOpen(false)
         setIsLoading(false)
       })
+      setEmail("")
+      setDescription("")
+      setAmount(0)
+      setCompany("")
+      setNumberPay("")
+      setUploadedFile("")
+      setPhoneNumber("")
+      setIsDialogOpen(false)
+      setIsPaymentDialogOpen(false)
+      setIsLoading(false)
     } catch (error) {
       toast({
         variant: "destructive",
@@ -209,7 +212,6 @@ const HomeWidget = ({ apis }: HomeWidgetProps) => {
               </Link>
             </div>
           </div>
-
           <CardList apis={apis} />
         </div>
       </div>
@@ -318,7 +320,7 @@ const HomeWidget = ({ apis }: HomeWidgetProps) => {
               <span className="flex justify-between items-center">
                 <Button
                   text="Cancel"
-                  // loading={isLoading}
+                  disabled={isLoading}
                   className="rounded-full bg-gray-300 text-black hover:bg-gray-200"
                   onClick={() => setIsPaymentDialogOpen(false)}
                 />
@@ -337,12 +339,32 @@ const HomeWidget = ({ apis }: HomeWidgetProps) => {
                     </svg>
                   }
                   loading={isMutating}
+                  disabled={isLoading}
                   className="rounded-lg"
                   onClick={submitHandle}
                 />
               </span>
             </DialogDescription>
           </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isLoading} onOpenChange={setIsLoading}>
+        <DialogContent className="grid place-items-center w-full Background">
+          <Logo />
+          <DialogDescription className=" grid place-items-center w-full space-y-2 ">
+            <h1 className="mb-4"> Check your phone</h1>
+            <p className="text-base">Did you reiceve the message?</p>
+            <p className="text-gray-400">
+              If not, write this in your phone to check your message for
+              payment:
+            </p>
+            <p className="text-2xl font-bold pt-5 ">*182*7*1#</p>
+            <p className="text-center">You have only 30 secs</p>
+          </DialogDescription>
+          <DialogFooter className=" py-8">
+            <Loader />
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

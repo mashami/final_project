@@ -1,6 +1,11 @@
-import { getApisUser, getUnActiveAPis } from "@/services/api"
-import { getUnctiveDev, getUser } from "@/services/user"
-import { Api, Prisma } from "@prisma/client"
+import {
+  getApisUser,
+  getRequestActive,
+  getRequests,
+  getUnActiveAPis
+} from "@/services/api"
+import { getActiveDev, getUnctiveDev, getUser } from "@/services/user"
+import { Api, Prisma, Request } from "@prisma/client"
 import { getServerSession } from "next-auth"
 import Link from "next/link"
 import { redirect } from "next/navigation"
@@ -30,10 +35,34 @@ const Profile = async () => {
   const apisUser = await getApisUser(userId)
   const getApiUser = apisUser.apis as Api[]
 
+  const ActiveUser = await getActiveDev()
+  const usersActiveted = ActiveUser.users as UserWithRelations[]
+
+  const requestData = await getRequests()
+
+  const requests = requestData.requests as Request[]
+
+  const requestDataActive = await getRequestActive()
+
+  const requestsActive = requestData.requests as Request[]
+
   if (user.status === "Dev" && user.dev_status === "Active") {
-    return <DevProfileWidget user={user} getApiUser={getApiUser} />
+    return (
+      <DevProfileWidget
+        user={user}
+        getApiUser={getApiUser}
+        requests={requestsActive}
+      />
+    )
   } else if (user.status === "Admin") {
-    return <AdminDashboard unctiveUser={usersUctive} apiUnctive={apiUnctive} />
+    return (
+      <AdminDashboard
+        unctiveUser={usersUctive}
+        apiUnctive={apiUnctive}
+        usersActiveted={usersActiveted}
+        requests={requests}
+      />
+    )
   } else if (user.status === "Dev" && user.dev_status === "Unctive") {
     return (
       <div className="w-screen h-screen grid place-content-center text-center space-y-4">

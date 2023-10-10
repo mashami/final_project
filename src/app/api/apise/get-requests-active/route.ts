@@ -5,9 +5,7 @@ import { NextResponse } from "next/server"
 export async function POST() {
   try {
     const requests = await prisma.request.findMany({
-      orderBy: {
-        createdAt: "desc"
-      }
+      where: { status: "Active" }
     })
 
     if (!requests) {
